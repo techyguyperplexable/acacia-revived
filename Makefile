@@ -510,7 +510,7 @@ ifneq ($(KBUILD_SRC),)
 	    $(srctree) $(objtree) $(VERSION) $(PATCHLEVEL)
 endif
 
-ifneq ($(shell $(CC) --version 2>&1 | head -n 1 | grep clang),)
+ifdef CONFIG_CC_IS_CLANG
 
 # Enable hot cold split optimization
 KBUILD_CFLAGS	+= -mllvm -hot-cold-split=true
@@ -737,7 +737,7 @@ ifdef CONFIG_CC_WERROR
 KBUILD_CFLAGS  += -Werror
 endif
 
-ifneq ($(shell $(CC) --version 2>&1 | head -n 1 | grep clang),)
+ifdef CONFIG_CC_IS_CLANG
 # Enable Clang Polly optimizations
 KBUILD_CFLAGS  += $(call cc-option, -mllvm -polly)
 KBUILD_CFLAGS  += $(call cc-option, -mllvm -polly-run-dce)
@@ -783,7 +783,7 @@ stackp-flags-$(CONFIG_STACKPROTECTOR_STRONG)      := -fstack-protector-strong
 
 KBUILD_CFLAGS += $(stackp-flags-y)
 
-ifneq ($(shell $(CC) --version 2>&1 | head -n 1 | grep clang),)
+ifdef CONFIG_CC_IS_CLANG
 ifneq ($(CROSS_COMPILE),)
 CLANG_TRIPLE	?= $(CROSS_COMPILE)
 CLANG_TARGET	:= --target=$(notdir $(CLANG_TRIPLE:%-=%))
