@@ -1521,6 +1521,7 @@ static void ufs_qcom_set_caps(struct ufs_hba *hba)
 		hba->caps |= UFSHCD_CAP_HIBERN8_WITH_CLK_GATING;
 	}
 	hba->caps |= UFSHCD_CAP_AUTO_BKOPS_SUSPEND;
+	hba->caps |= UFSHCD_CAP_RPM_AUTOSUSPEND;
 
 	if (host->hw_ver.major >= 0x2) {
 		if (!host->disable_lpm)
