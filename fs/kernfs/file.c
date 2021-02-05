@@ -286,16 +286,17 @@ static ssize_t kernfs_fop_write(struct file *file, const char __user *user_buf,
 		len = min_t(size_t, count, PAGE_SIZE);
 	}
 
-	if (len < sizeof(buf_onstack)) {
-		buf = buf_onstack;
+	buf = of->prealloc_buf;
+	if (buf) {
+		mutex_lock(&of->prealloc_mutex);
 	} else {
-		buf = of->prealloc_buf;
-		if (buf)
-			mutex_lock(&of->prealloc_mutex);
-		else
+		if (len < ARRAY_SIZE(buf_onstack)) {
+			buf = buf_onstack;
+		} else {
 			buf = kmalloc(len + 1, GFP_KERNEL);
-		if (!buf)
-			return -ENOMEM;
+			if (!buf)
+				return -ENOMEM;
+		}
 	}
 
 	if (copy_from_user(buf, user_buf, len)) {
