@@ -22,12 +22,7 @@
 #include <linux/suspend.h>
 
 #include "smpboot.h"
-
-enum {
-	CSD_FLAG_LOCK		= 0x01,
-	CSD_FLAG_SYNCHRONOUS	= 0x02,
-};
-
+#include "sched/features.h"
 #include "sched/smp.h"
 
 #define CSD_TYPE(_csd)	((_csd)->flags & CSD_FLAG_TYPE_MASK)
