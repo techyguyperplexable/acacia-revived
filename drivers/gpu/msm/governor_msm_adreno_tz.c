@@ -13,7 +13,6 @@
 #include <linux/io.h>
 #include <linux/ftrace.h>
 #include <linux/mm.h>
-#include <linux/msm_adreno_devfreq.h>
 #include <linux/state_notifier.h>
 #include <asm/cacheflush.h>
 #include <drm/drm_refresh_rate.h>
