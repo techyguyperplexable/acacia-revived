@@ -1719,7 +1719,7 @@ int do_syslog(int type, char __user *buf, int len, int source)
 		error = 0;
 		if (!len)
 			goto out;
-		if (!access_ok(VERIFY_WRITE, buf, len)) {
+		if (!access_ok(buf, len)) {
 			error = -EFAULT;
 			goto out;
 		}
