@@ -1,11 +1,3 @@
-config ARGOS
-	bool "Throughput monitoring Feature"
-	default n
-	help
-	  This option enables monitoring the data throughput and doing several actions for
-	  enhancing the performance such as adjusting the CPU freqency, allocating the tasks
-	  to the appropriate CPU and so on
-
 menuconfig SEC_MISC
 	bool "Enable SEC miscellaneous feature"
 	default n
