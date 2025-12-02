@@ -5,6 +5,10 @@
 #include <linux/types.h>
 #include <linux/version.h>
 #include <linux/ptrace.h>
+#ifdef CONFIG_KSU_SUSFS
+#include <linux/namei.h>
+#include "objsec.h"
+#endif // #ifdef CONFIG_KSU_SUSFS
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 14, 0)
 #include <linux/compiler.h>
 #endif
@@ -101,8 +105,12 @@ static int ksu_sucompat_user_common(const char __user **filename_user,
 				    const char *syscall_name,
 				    const bool escalate)
 {
+#ifdef CONFIG_KSU_SUSFS
+	char path[sizeof(su) + 1] = {0};
+#else
 	char path[sizeof(su)]; // sizeof includes nullterm already!
 	memset(path, 0, sizeof(path));
+#endif
 	ksu_strncpy_from_user_nofault(path, *filename_user, sizeof(path));
 
 	if (memcmp(path, su, sizeof(su)))
@@ -148,6 +156,21 @@ int ksu_handle_faccessat(int *dfd, const char __user **filename_user, int *mode,
 	return ksu_sucompat_user_common(filename_user, "faccessat", false);
 }
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 1, 0) && defined(CONFIG_KSU_SUSFS)
+int ksu_handle_stat(int *dfd, struct filename **filename, int *flags)
+{
+	if (!is_su_allowed(filename))
+		return 0;
+	if (unlikely(IS_ERR(filename)))
+		return 0;
+	if (likely(memcmp((*filename)->name, su, sizeof(su))))
+		return 0;
+
+	pr_info("ksu_handle_stat: su->sh!\n");
+	memcpy((void *)((*filename)->name), sh_path, sizeof(sh_path));
+	return 0;
+}
+#else
 int ksu_handle_stat(int *dfd, const char __user **filename_user, int *flags)
 {
 	if (!is_su_allowed(filename_user))
@@ -155,6 +178,7 @@ int ksu_handle_stat(int *dfd, const char __user **filename_user, int *flags)
 
 	return ksu_sucompat_user_common(filename_user, "newfstatat", false);
 }
+#endif
 
 int ksu_handle_execve_sucompat(int *fd, const char __user **filename_user,
 			       void *__never_use_argv, void *__never_use_envp,
