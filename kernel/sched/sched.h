@@ -868,7 +868,9 @@ struct root_domain {
 	 * - Running task is misfit
 	 */
 	int			overload;
-
+	
+	int			overutilized;
+	
 	/*
 	 * The bit corresponding to a CPU gets set here if such CPU has more
 	 * than one runnable -deadline task (as it is below for RT tasks).

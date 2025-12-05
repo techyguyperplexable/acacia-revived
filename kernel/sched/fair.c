@@ -3147,6 +3147,17 @@ account_entity_dequeue(struct cfs_rq *cfs_rq, struct sched_entity *se)
 	WRITE_ONCE(*ptr, res);					\
 } while (0)
 
+/*
+ * Remove and clamp on negative, from a local variable.
+ *
+ * A variant of sub_positive(), which does not use explicit load-store
+ * and is thus optimized for local variable updates.
+ */
+#define lsub_positive(_ptr, _val) do {				\
+	typeof(_ptr) ptr = (_ptr);				\
+	*ptr -= min_t(typeof(*ptr), *ptr, _val);		\
+} while (0)
+
 #ifdef CONFIG_SMP
 static inline void
 enqueue_runnable_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se)
@@ -5699,12 +5710,6 @@ static void set_sd_overutilized(struct sched_domain *sd)
 {
 	trace_sched_overutilized(sd, sd->shared->overutilized, true);
 	sd->shared->overutilized = true;
-}
-
-static void clear_sd_overutilized(struct sched_domain *sd)
-{
-	trace_sched_overutilized(sd, sd->shared->overutilized, false);
-	sd->shared->overutilized = false;
 }
 
 static inline void update_overutilized_status(struct rq *rq)
@@ -9696,12 +9701,6 @@ static int idle_cpu_without(int cpu, struct task_struct *p)
 	 * impact of p on cpu must be used instead. The updated nr_running
 	 * be computed and tested before calling idle_cpu_without().
 	 */
-
-#ifdef CONFIG_SMP
-	if (!llist_empty(&rq->wake_list))
-		return 0;
-#endif
-
 	return 1;
 }
 
@@ -9982,10 +9981,7 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
 		if (local_group) {
 			sds->local = sg;
 			sgs = local;
-
-			if (env->idle != CPU_NEWLY_IDLE ||
-			    time_after_eq(jiffies, sg->sgc->next_update))
-				update_group_capacity(env->sd, env->dst_cpu);
+			update_group_capacity(env->sd, env->dst_cpu);
 		}
 
 		update_sg_lb_stats(env, sg, sgs, &sg_status);
@@ -9993,19 +9989,6 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
 		if (local_group)
 			goto next_group;
 
-
-		/*
-		 * Disallow moving tasks from asym cap sibling CPUs to other
-		 * CPUs (lower capacity) unless the asym cap sibling group has
-		 * no capacity to manage the current load.
-		 */
-		if ((env->sd->flags & SD_ASYM_CPUCAPACITY) &&
-			sgs->group_no_capacity &&
-			asym_cap_sibling_group_has_capacity(env->dst_cpu,
-						env->sd->imbalance_pct)) {
-			sgs->group_no_capacity = 0;
-			sgs->group_type = group_classify(sg, sgs);
-		}
 
 		if (update_sd_pick_busiest(env, sds, sg, sgs)) {
 			sds->busiest = sg;
@@ -10016,15 +9999,6 @@ next_group:
 		/* Now, start updating sd_lb_stats */
 		sds->total_load += sgs->group_load;
 		sds->total_capacity += sgs->group_capacity;
-		sds->total_util += sgs->group_util;
-
-		trace_sched_load_balance_sg_stats(sg->cpumask[0],
-				sgs->group_type, sgs->idle_cpus,
-				sgs->sum_nr_running, sgs->group_load,
-				sgs->group_capacity, sgs->group_util,
-				sgs->group_no_capacity,	sgs->load_per_task,
-				sgs->group_misfit_task_load,
-				sds->busiest ? sds->busiest->cpumask[0] : 0);
 
 		sg = sg->next;
 	} while (sg != env->sd->groups);
@@ -10049,12 +10023,18 @@ next_group:
 
 		/* update overload indicator if we are at root domain */
 		WRITE_ONCE(rd->overload, sg_status & SG_OVERLOAD);
+
+		/* Update over-utilization (tipping point, U >= 0) indicator */
+		WRITE_ONCE(rd->overutilized, sg_status & SG_OVERUTILIZED);
+	} else if (sg_status & SG_OVERUTILIZED) {
+		struct root_domain *rd = env->dst_rq->rd;
+
+		WRITE_ONCE(rd->overutilized, SG_OVERUTILIZED);
 	}
 
+#ifdef CONFIG_SCHED_WALT
 	if (sg_status & SG_OVERUTILIZED)
 		set_sd_overutilized(env->sd);
-	else
-		clear_sd_overutilized(env->sd);
 
 	/*
 	 * If there is a misfit task in one cpu in this sched_domain
@@ -10090,7 +10070,7 @@ next_group:
 	    sds->total_capacity * 1024 < sds->total_util *
 			 sched_capacity_margin_up[group_first_cpu(sds->local)])
 		set_sd_overutilized(env->sd->parent);
-
+#endif
 }
 
 /**
@@ -10102,7 +10082,6 @@ next_group:
 static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *sds)
 {
 	struct sg_lb_stats *local, *busiest;
-	bool no_imbalance = false;
 
 	local = &sds->local_stat;
 	busiest = &sds->busiest_stat;
@@ -10251,6 +10230,7 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
 		(sds->avg_load - local->avg_load) * local->group_capacity
 	) / SCHED_CAPACITY_SCALE;
 }
+
 
 /******* find_busiest_group() helpers end here *********************/
 
@@ -10427,12 +10407,6 @@ static struct sched_group *find_busiest_group(struct lb_env *env)
 force_balance:
 	/* Looks like there is an imbalance. Compute it */
 	calculate_imbalance(env, &sds);
-	trace_sched_load_balance_stats(sds.busiest->cpumask[0],
-				busiest->group_type, busiest->avg_load,
-				busiest->load_per_task,	sds.local->cpumask[0],
-				local->group_type, local->avg_load,
-				local->load_per_task,
-				sds.avg_load, env->imbalance);
 	return env->imbalance ? sds.busiest : NULL;
 
 out_balanced:
@@ -10619,15 +10593,6 @@ static int need_active_balance(struct lb_env *env)
 	}
 
 	return unlikely(sd->nr_balance_failed > sd->cache_nice_tries+2);
-}
-
-static int group_balance_cpu_not_isolated(struct sched_group *sg)
-{
-	cpumask_t cpus;
-
-	cpumask_and(&cpus, sched_group_span(sg), group_balance_mask(sg));
-	cpumask_andnot(&cpus, &cpus, cpu_isolated_mask);
-	return cpumask_first(&cpus);
 }
 
 static int active_load_balance_cpu_stop(void *data);
