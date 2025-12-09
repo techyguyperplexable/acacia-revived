@@ -210,59 +210,6 @@ failed_create_dir:
 }
 #endif
 
-static int _clk_rate_set(void *data, u64 val)
-{
-	struct msm_cvp_core *core;
-	struct cvp_hfi_device *dev;
-	struct allowed_clock_rates_table *tbl = NULL;
-	unsigned int tbl_size, i;
-
-	core = list_first_entry(&cvp_driver->cores, struct msm_cvp_core, list);
-	dev = core->device;
-	tbl = core->resources.allowed_clks_tbl;
-	tbl_size = core->resources.allowed_clks_tbl_size;
-
-	if (val == 0) {
-		struct iris_hfi_device *hdev = dev->hfi_device_data;
-
-		msm_cvp_clock_voting = 0;
-		call_hfi_op(dev, scale_clocks, hdev, hdev->clk_freq);
-		return 0;
-	}
-
-	for (i = 0; i < tbl_size; i++)
-		if (val <= tbl[i].clock_rate)
-			break;
-
-	if (i == tbl_size)
-		msm_cvp_clock_voting = tbl[tbl_size-1].clock_rate;
-	else
-		msm_cvp_clock_voting = tbl[i].clock_rate;
-
-	dprintk(CVP_WARN, "Override cvp_clk_rate with %d\n",
-			msm_cvp_clock_voting);
-
-	call_hfi_op(dev, scale_clocks, dev->hfi_device_data,
-		msm_cvp_clock_voting);
-
-	return 0;
-}
-
-static int _clk_rate_get(void *data, u64 *val)
-{
-	struct msm_cvp_core *core;
-	struct iris_hfi_device *hdev;
-
-	core = list_first_entry(&cvp_driver->cores, struct msm_cvp_core, list);
-	hdev = core->device->hfi_device_data;
-	if (msm_cvp_clock_voting)
-		*val = msm_cvp_clock_voting;
-	else
-		*val = hdev->clk_freq;
-
-	return 0;
-}
-
 #ifdef CONFIG_DEBUG_FS
 DEFINE_DEBUGFS_ATTRIBUTE(clk_rate_fops, _clk_rate_get, _clk_rate_set, "%llu\n");
 
