@@ -33,6 +33,7 @@
 #include "hif_debug.h"
 #include "pld_common.h"
 #include "target_type.h"
+#include "ath_procfs.h"
 
 #define PROCFS_NAME             "athdiagpfs"
 #ifdef MULTI_IF_NAME
@@ -249,6 +250,7 @@ void athdiag_procfs_remove(void)
 	}
 }
 #else
+#include "ath_procfs.h"
 int athdiag_procfs_init(void *scn)
 {
 	return 0;

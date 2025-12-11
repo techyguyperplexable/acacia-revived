@@ -2124,8 +2124,6 @@ static void dp_reo_desc_clean_up(struct dp_soc *soc,
  */
 static inline void dp_reo_limit_clean_batch_sz(uint32_t *list_size)
 {
-	unsigned long curr_ts = qdf_get_system_timestamp();
-
 	if ((*list_size) > REO_DESC_FREELIST_SIZE) {
 		dp_err_log("%lu:freedesc number %d in freelist",
 			   curr_ts, *list_size);
