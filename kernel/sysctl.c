@@ -1513,7 +1513,11 @@ static struct ctl_table vm_table[] = {
 		.mode		= 0444,
 		.proc_handler	= proc_dointvec_minmax,
 		.extra1		= SYSCTL_ZERO,
+#ifdef CONFIG_INCREASE_MAXIMUM_SWAPPINESS
 		.extra2		= &max_swappiness,
+#else
+		.extra2		= &one_hundred,
+#endif
 	},
 	{
 		.procname	= "mmap_readaround_limit",
