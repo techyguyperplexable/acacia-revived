@@ -1182,6 +1182,7 @@
 		BW_OPP_ENTRY_DDR( 2133, 4,  0x80); /*  8136 MB/s */
 		BW_OPP_ENTRY_DDR( 2736, 4, 0x100); /* 10437 MB/s */
 		BW_OPP_ENTRY_DDR( 3196, 4, 0x100); /* 12191 MB/s */
+		BW_OPP_ENTRY_DDR( 3867, 4, 0x100); /* 14749 MB/s */
 	};
 
 	suspendable_ddr_bw_opp_table: suspendable-ddr-bw-opp-table {
@@ -1197,6 +1198,7 @@
 		BW_OPP_ENTRY_DDR( 2133, 4,  0x80); /*  8136 MB/s */
 		BW_OPP_ENTRY_DDR( 2736, 4, 0x100); /* 10437 MB/s */
 		BW_OPP_ENTRY_DDR( 3196, 4, 0x100); /* 12191 MB/s */
+		BW_OPP_ENTRY_DDR( 3867, 4, 0x100); /* 14749 MB/s */
 	};
 
 	llcc_pmu: llcc-pmu@9095000 {
