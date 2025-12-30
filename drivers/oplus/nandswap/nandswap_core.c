@@ -59,29 +59,11 @@
 #include <linux/version.h>
 #include "nandswap.h"
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5,4,0)
-#include <linux/pagewalk.h>
-#endif
-
-/*
-#ifdef CONFIG_OPLUS_FEATURE_OF2FS
-#include <../../../../fs/f2fs/f2fs.h>
-#endif
-*/
-
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5,4,0)
-#define walk_page_range_hook(mm, start, end, walk, rp)	\
-	({								\
-	 int _err = walk_page_range(mm, start, end, walk, rp);	\
-	 _err;	\
-	 })
-#else
 #define walk_page_range_hook(mm, start, end, walk, rp)	\
 	({								\
 	 int _err = walk_page_range(start, end, walk);	\
 	 _err;				\
 	 })
-#endif
 
 
 #define RD_SIZE 128
@@ -273,39 +255,6 @@ out:
 	return ntask;
 }
 
-/*
-#ifdef CONFIG_OPLUS_FEATURE_OF2FS
-extern block_t of2fs_seg_freefrag(struct f2fs_sb_info *sbi, unsigned int segno,
-				  block_t* blocks, unsigned int n);
-static inline unsigned int f2fs_frag_score(struct super_block *sb)
-{
-	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-	unsigned int i, total_segs =
-			le32_to_cpu(sbi->raw_super->segment_count_main);
-	block_t blocks[9], total_blocks = 0;
-	memset(blocks, 0, sizeof(blocks));
-	for (i = 0; i < total_segs; i++) {
-		total_blocks += of2fs_seg_freefrag(sbi, i,
-			blocks, ARRAY_SIZE(blocks));
-		cond_resched();
-	}
-	return total_blocks ? (blocks[0] + blocks[1]) * 100ULL / total_blocks : 0;
-}
-
-static inline unsigned int f2fs_undiscard_score(struct super_block *sb)
-{
-	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-	unsigned int undiscard_blks = 0;
-	unsigned int score;
-	unsigned int free_blks = sbi->user_block_count - valid_user_blocks(sbi);
-	if (SM_I(sbi) && SM_I(sbi)->dcc_info)
-		undiscard_blks = SM_I(sbi)->dcc_info->undiscard_blks;
-	score = free_blks ? undiscard_blks * 100ULL / free_blks : 0;
-	return score;
-}
-#endif
-*/
-
 static void ns_life_protect_update(void)
 {
 	nsi.fn_status = (nsi.data_avail < nsi.data_threshold
@@ -352,17 +301,6 @@ static inline void ns_data_check(void)
 			nsi.data_threshold = NS_DATA_THRESHOLD_128G;
 		}
 	nsi.data_avail = st.f_bavail;
-
-/*
-#ifdef CONFIG_OPLUS_FEATURE_OF2FS
-	if (kpath.dentry->d_sb->s_magic == F2FS_SUPER_MAGIC) {
-		nsi.frag_score = f2fs_frag_score(kpath.dentry->d_sb);
-		nsi.undiscard_score = f2fs_undiscard_score(kpath.dentry->d_sb);
-	}
-	else
-		goto out;
-#endif
-*/
 
 out:
 	return;
@@ -733,10 +671,6 @@ cont:
 		}
 
 		list_add(&page->lru, &page_list);
-#ifdef CONFIG_OPLUS_SYSTEM_KERNEL_QCOM
-		inc_node_page_state(page, NR_ISOLATED_ANON +
-				page_is_file_cache(page));
-#endif
 		isolated++;
 		rp->nr_scanned++;
 
@@ -975,11 +909,6 @@ static int drop_swapcache_pte(pmd_t *pmd, unsigned long start,
 		}
 
 		list_add(&page->lru, &page_list);
-
-#ifdef CONFIG_OPLUS_SYSTEM_KERNEL_QCOM
-		inc_node_page_state(page, NR_ISOLATED_ANON +
-				page_is_file_cache(page));
-#endif
 		rp->nr_scanned++;
 	}
 
