@@ -1,4 +1,4 @@
-# We can build either as part of a standalone Kernel build or as
+ccflags-y += $(INCS)# We can build either as part of a standalone Kernel build or as
 # an external module.  Determine which mechanism is being used
 ifeq ($(MODNAME),)
 	KERNEL_BUILD := y
@@ -2299,6 +2299,8 @@ OBJS += $(TXRX3.0_OBJS)
 endif
 
 ccflags-y += $(INCS)
+
+ccflags-y += $(DISABLE_LTO)
 
 cppflags-y +=	-DANI_OS_TYPE_ANDROID=6 \
 		-Wall\
