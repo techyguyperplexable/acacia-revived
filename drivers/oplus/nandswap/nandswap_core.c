@@ -177,7 +177,7 @@ static struct reclaim_info drop_info = { {{0}}, 0, 0, 0 };
 static struct reclaim_info in_info = { {{0}}, 0, 0, 0 };
 static DEFINE_SPINLOCK(rd_lock);
 
-bool nandswap_enable __read_mostly = false;
+bool nandswap_enable __read_mostly = true;
 extern int swapin_walk_pmd_entry(pmd_t *pmd, unsigned long start,
 				 unsigned long end, struct mm_walk *walk);
 extern unsigned long nswap_reclaim_page_list(struct list_head *page_list,
@@ -1532,6 +1532,8 @@ static int __init nandswap_init(void)
 
 	profile_event_register(PROFILE_TASK_EXIT, &process_notifier_block);
 	ns_life_ctrl_init();
+	ns_data_check();
+	ns_life_protect_update();
 	ns_create_proc_dir();
 
 	return 0;
