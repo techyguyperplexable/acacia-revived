@@ -315,6 +315,32 @@ schedtune_tasks_update(struct task_struct *p, int cpu, int idx, int task_count)
 			bg->group[idx].ts);
 }
 
+/*
+ * NOTE: This function must be called while holding the lock on the CPU RQ
+ */
+void schedtune_enqueue_task(struct task_struct *p, int cpu)
+{
+	struct boost_groups *bg = &per_cpu(cpu_boost_groups, cpu);
+	unsigned long irq_flags;
+	int idx;
+
+	if (unlikely(!schedtune_initialized))
+		return;
+
+	/*
+	 * Boost group accouting is protected by a per-cpu lock and requires
+	 * interrupt to be disabled to avoid race conditions for example on
+	 * do_exit()::cgroup_exit() and task migration.
+	 */
+	raw_spin_lock_irqsave(&bg->lock, irq_flags);
+
+	idx = p->stune_idx;
+
+	schedtune_tasks_update(p, cpu, idx, ENQUEUE_TASK);
+
+	raw_spin_unlock_irqrestore(&bg->lock, irq_flags);
+}
+
 int schedtune_can_attach(struct cgroup_taskset *tset)
 {
 	return 0;
@@ -329,6 +355,81 @@ void schedtune_cancel_attach(struct cgroup_taskset *tset)
 	 * mouted on its own hierarcy, for the time being we do not implement
 	 * a proper rollback mechanism */
 	WARN(1, "SchedTune cancel attach not implemented");
+}
+
+/*
+ * NOTE: This function must be called while holding the lock on the CPU RQ
+ */
+void schedtune_dequeue_task(struct task_struct *p, int cpu)
+{
+	struct boost_groups *bg = &per_cpu(cpu_boost_groups, cpu);
+	unsigned long irq_flags;
+	int idx;
+
+	if (unlikely(!schedtune_initialized))
+		return;
+
+	/*
+	 * Boost group accouting is protected by a per-cpu lock and requires
+	 * interrupt to be disabled to avoid race conditions on...
+	 */
+	raw_spin_lock_irqsave(&bg->lock, irq_flags);
+
+	idx = p->stune_idx;
+
+	schedtune_tasks_update(p, cpu, idx, DEQUEUE_TASK);
+
+	raw_spin_unlock_irqrestore(&bg->lock, irq_flags);
+}
+
+int schedtune_cpu_boost_with(int cpu, struct task_struct *p)
+{
+	struct boost_groups *bg;
+	u64 now;
+	int task_boost = p ? schedtune_task_boost(p) : -100;
+
+	bg = &per_cpu(cpu_boost_groups, cpu);
+	now = sched_clock_cpu(cpu);
+
+	/* Check to see if we have a hold in effect */
+	if (schedtune_boost_timeout(now, bg->boost_ts))
+		schedtune_cpu_update(cpu, now);
+
+	return max(bg->boost_max, task_boost);
+}
+
+int schedtune_task_boost(struct task_struct *p)
+{
+	struct schedtune *st;
+	int task_boost;
+
+	if (unlikely(!schedtune_initialized))
+		return 0;
+
+	/* Get task boost value */
+	rcu_read_lock();
+	st = task_schedtune(p);
+	task_boost = st->boost;
+	rcu_read_unlock();
+
+	return task_boost;
+}
+
+int schedtune_prefer_idle(struct task_struct *p)
+{
+	struct schedtune *st;
+	int prefer_idle;
+
+	if (unlikely(!schedtune_initialized))
+		return 0;
+
+	/* Get prefer_idle value */
+	rcu_read_lock();
+	st = task_schedtune(p);
+	prefer_idle = st->prefer_idle;
+	rcu_read_unlock();
+
+	return prefer_idle;
 }
 
 static u64
