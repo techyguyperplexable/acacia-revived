@@ -1,5 +1,3 @@
-
-source "drivers/oplus/Kconfig"
 # SPDX-License-Identifier: GPL-2.0
 menu "Device Drivers"
 
@@ -262,7 +260,5 @@ source "drivers/fingerprint/Kconfig"
 source "drivers/gator/Kconfig"
 
 source "drivers/spu_verify/Kconfig"
-
-source "drivers/oplus/Kconfig"
 
 endmenu
