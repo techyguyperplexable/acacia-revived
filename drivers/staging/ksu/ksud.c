@@ -33,16 +33,11 @@
 #include "kernel_compat.h"
 #include "klog.h" // IWYU pragma: keep
 #include "ksud.h"
-#ifdef CONFIG_KSU_SYSCALL_HOOK
-#include "kp_hook.h"
-extern int ksu_observer_init(void);
-#endif
 #include "selinux/selinux.h"
 #include "throne_tracker.h"
 
 bool ksu_module_mounted __read_mostly = false;
 bool ksu_boot_completed __read_mostly = false;
-bool already_post_fs_data __read_mostly = false;
 
 extern bool ksu_module_mounted __read_mostly;
 
@@ -58,19 +53,21 @@ static const char KERNEL_SU_RC[] =
 	"on post-fs-data\n"
 	"    start logd\n"
 	// We should wait for the post-fs-data finish
-	"    exec u:r:su:s0 root -- " KSUD_PATH " post-fs-data\n"
+	"    exec u:r:" KERNEL_SU_DOMAIN ":s0 root -- " KSUD_PATH
+	" post-fs-data\n"
 	"\n"
 
 	"on nonencrypted\n"
-	"    exec u:r:su:s0 root -- " KSUD_PATH " services\n"
+	"    exec u:r:" KERNEL_SU_DOMAIN ":s0 root -- " KSUD_PATH " services\n"
 	"\n"
 
 	"on property:vold.decrypt=trigger_restart_framework\n"
-	"    exec u:r:su:s0 root -- " KSUD_PATH " services\n"
+	"    exec u:r:" KERNEL_SU_DOMAIN ":s0 root -- " KSUD_PATH " services\n"
 	"\n"
 
 	"on property:sys.boot_completed=1\n"
-	"    exec u:r:su:s0 root -- " KSUD_PATH " boot-completed\n"
+	"    exec u:r:" KERNEL_SU_DOMAIN ":s0 root -- " KSUD_PATH
+	" boot-completed\n"
 	"\n"
 
 	"\n";
@@ -79,15 +76,14 @@ static void stop_vfs_read_hook(void);
 static void stop_execve_hook(void);
 static void stop_input_hook(void);
 
-#ifdef CONFIG_KSU_MANUAL_HOOK
 bool ksu_vfs_read_hook __read_mostly = true;
 bool ksu_execveat_hook __read_mostly = true;
 bool ksu_input_hook __read_mostly = true;
-#endif
 
 u32 ksu_file_sid;
 void on_post_fs_data(void)
 {
+	static bool already_post_fs_data = false;
 	if (already_post_fs_data) {
 		pr_info("on_post_fs_data already done\n");
 		return;
@@ -95,9 +91,6 @@ void on_post_fs_data(void)
 	already_post_fs_data = true;
 	pr_info("on_post_fs_data!\n");
 	ksu_load_allow_list();
-#ifdef CONFIG_KSU_SYSCALL_HOOK
-	ksu_observer_init();
-#endif
 	stop_input_hook();
 
 	ksu_file_sid = ksu_get_ksu_file_sid();
@@ -139,9 +132,6 @@ void on_boot_completed(void)
 {
 	ksu_boot_completed = true;
 	pr_info("on_boot_completed!\n");
-#ifdef CONFIG_KSU_SYSCALL_HOOK
-	track_throne(true);
-#endif
 	ksu_avc_spoof_init(); 
 }
 
@@ -197,9 +187,8 @@ static int __maybe_unused count(struct user_arg_ptr argv, int max)
 
 			if (fatal_signal_pending(current))
 				return -ERESTARTNOHAND;
-#ifdef CONFIG_KSU_MANUAL_HOOK
+
 			cond_resched();
-#endif
 		}
 	}
 	return i;
@@ -214,16 +203,23 @@ static struct callback_head on_post_fs_data_cb = {
 	.func = on_post_fs_data_cbfun
 };
 
+static inline void handle_second_stage(void)
+{
+	apply_kernelsu_rules();
+	setup_ksu_cred();
+}
+
+extern int ksu_handle_execveat_init(struct filename *filename);
+
 // IMPORTANT NOTE: the call from execve_handler_pre WON'T provided correct value for envp and flags in GKI version
 int ksu_handle_execveat_ksud(int *fd, struct filename **filename_ptr,
 			     struct user_arg_ptr *argv,
 			     struct user_arg_ptr *envp, int *flags)
 {
-#ifdef CONFIG_KSU_MANUAL_HOOK
 	if (!ksu_execveat_hook) {
 		return 0;
 	}
-#endif
+
 	struct filename *filename;
 
 	static const char app_process[] = "/system/bin/app_process";
@@ -243,6 +239,12 @@ int ksu_handle_execveat_ksud(int *fd, struct filename **filename_ptr,
 		return 0;
 	}
 
+	if (!ksu_handle_execveat_init(filename)) {
+		// - return non-zero here if ksu_handle_execveat_init() return success
+		//   as we don't want it to execute ksu_handle_execveat_sucompat()
+		return 1;
+	}
+
 	if (unlikely(!memcmp(filename->name, system_bin_init,
 			     sizeof(system_bin_init) - 1) &&
 		     argv)) {
@@ -259,7 +261,7 @@ int ksu_handle_execveat_ksud(int *fd, struct filename **filename_ptr,
 					first_arg);
 				if (!strcmp(first_arg, "second_stage")) {
 					pr_info("/system/bin/init second_stage executed\n");
-					apply_kernelsu_rules();
+					handle_second_stage();
 					init_second_stage_executed = true;
 				}
 			} else {
@@ -282,7 +284,7 @@ int ksu_handle_execveat_ksud(int *fd, struct filename **filename_ptr,
 				pr_info("/init first arg: %s\n", first_arg);
 				if (!strcmp(first_arg, "--second-stage")) {
 					pr_info("/init second_stage executed\n");
-					apply_kernelsu_rules();
+					handle_second_stage();
 					init_second_stage_executed = true;
 				}
 			} else {
@@ -318,7 +320,7 @@ int ksu_handle_execveat_ksud(int *fd, struct filename **filename_ptr,
 					    (!strcmp(env_value, "1") ||
 					     !strcmp(env_value, "true"))) {
 						pr_info("/init second_stage executed\n");
-						apply_kernelsu_rules();
+						handle_second_stage();
 						init_second_stage_executed =
 							true;
 					}
@@ -379,11 +381,10 @@ static ssize_t read_iter_proxy(struct kiocb *iocb, struct iov_iter *to)
 int ksu_handle_vfs_read(struct file **file_ptr, char __user **buf_ptr,
 			size_t *count_ptr, loff_t **pos)
 {
-#ifdef CONFIG_KSU_MANUAL_HOOK
 	if (!ksu_vfs_read_hook) {
 		return 0;
 	}
-#endif
+
 	struct file *file;
 	char __user *buf;
 	size_t count;
@@ -492,20 +493,22 @@ static bool is_volumedown_enough(unsigned int count)
 int ksu_handle_input_handle_event(unsigned int *type, unsigned int *code,
 				  int *value)
 {
-#ifdef CONFIG_KSU_MANUAL_HOOK
 	if (!ksu_input_hook) {
 		return 0;
 	}
-#endif
+
 	if (*type == EV_KEY && *code == KEY_VOLUMEDOWN) {
-		int val = *value;
-		pr_info("KEY_VOLUMEDOWN val: %d\n", val);
-		if (val) {
-			// key pressed, count it
-			volumedown_pressed_count += 1;
-			if (is_volumedown_enough(volumedown_pressed_count)) {
-				stop_input_hook();
-			}
+		// Logic: 0 = released, 1 = pressed
+		if (*value <= 0) {
+			return 0;
+		}
+
+		// key pressed, count it
+		volumedown_pressed_count++;
+		pr_info("input_handle_event: vol_down pressed count: %u\n", volumedown_pressed_count);
+		if (is_volumedown_enough(volumedown_pressed_count)) {
+			pr_info("input_handle_event: vol_down pressed MAX! safe mode is active!\n");
+			stop_input_hook();
 		}
 	}
 
@@ -514,125 +517,36 @@ int ksu_handle_input_handle_event(unsigned int *type, unsigned int *code,
 
 bool ksu_is_safe_mode(void)
 {
-	if (already_post_fs_data) {
-		// stop checking if its already on-post-fs-data
-		return false;
-	}
-
-	static bool safe_mode = false;
-	if (safe_mode) {
-		// don't need to check again, userspace may call multiple times
-		return true;
-	}
-
-	// just in case
-	stop_input_hook();
-
-	pr_info("volumedown_pressed_count: %d\n", volumedown_pressed_count);
-
-	if (is_volumedown_enough(volumedown_pressed_count)) {
-		// pressed over 3 times
-		pr_info("KEY_VOLUMEDOWN pressed max times, safe mode detected!\n");
-		safe_mode = true;
-		return true;
-	}
-
-	return false;
+	return is_volumedown_enough(volumedown_pressed_count);
 }
-
-#ifdef CONFIG_KSU_MANUAL_HOOK
-static int ksu_execve_ksud_common(const char __user *filename_user,
-				  struct user_arg_ptr *argv)
-{
-	struct filename filename_in, *filename_p;
-	char path[32];
-	long len;
-
-	// return early if disabled.
-	if (!ksu_execveat_hook) {
-		return 0;
-	}
-
-	if (!filename_user)
-		return 0;
-
-	len = ksu_strncpy_from_user_nofault(path, filename_user, 32);
-	if (len <= 0)
-		return 0;
-
-	path[sizeof(path) - 1] = '\0';
-
-	// this is because ksu_handle_execveat_ksud calls it filename->name
-	filename_in.name = path;
-	filename_p = &filename_in;
-
-	return ksu_handle_execveat_ksud(AT_FDCWD, &filename_p, argv, NULL,
-					NULL);
-}
-
-int __maybe_unused
-ksu_handle_execve_ksud(const char __user *filename_user,
-		       const char __user *const __user *__argv)
-{
-	struct user_arg_ptr argv = { .ptr.native = __argv };
-	return ksu_execve_ksud_common(filename_user, &argv);
-}
-
-#if defined(CONFIG_COMPAT) && defined(CONFIG_64BIT)
-int __maybe_unused ksu_handle_compat_execve_ksud(
-	const char __user *filename_user, const compat_uptr_t __user *__argv)
-{
-	struct user_arg_ptr argv = { .ptr.compat = __argv };
-	return ksu_execve_ksud_common(filename_user, &argv);
-}
-#endif /* COMPAT & 64BIT */
-
-#endif
 
 static void stop_vfs_read_hook(void)
 {
-#ifdef CONFIG_KSU_SYSCALL_HOOK
-	kp_handle_ksud_stop(VFS_READ_HOOK_KP);
-#else
 	ksu_vfs_read_hook = false;
 	pr_info("stop vfs_read_hook\n");
-#endif
 }
 
 static void stop_execve_hook(void)
 {
-#ifdef CONFIG_KSU_SYSCALL_HOOK
-	kp_handle_ksud_stop(EXECVE_HOOK_KP);
-#else
 	ksu_execveat_hook = false;
 	pr_info("stop execve_hook\n");
-#endif
 }
 
 static void stop_input_hook(void)
 {
-#ifdef CONFIG_KSU_SYSCALL_HOOK
-	kp_handle_ksud_stop(INPUT_EVENT_HOOK_KP);
-#else
+	// No need to stop when its already stopped.
 	if (!ksu_input_hook) {
 		return;
 	}
 	ksu_input_hook = false;
 	pr_info("stop input_hook\n");
-#endif
 }
 
 // ksud: module support
 void ksu_ksud_init(void)
 {
-#ifdef CONFIG_KSU_SYSCALL_HOOK
-	kp_handle_ksud_init();
-#endif
 }
 
 void ksu_ksud_exit(void)
 {
-#ifdef CONFIG_KSU_SYSCALL_HOOK
-	kp_handle_ksud_exit();
-#endif
 }

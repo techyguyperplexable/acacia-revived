@@ -5,10 +5,6 @@
 #include <linux/types.h>
 #include <linux/version.h>
 #include <linux/ptrace.h>
-#ifdef CONFIG_KSU_SUSFS
-#include <linux/namei.h>
-#include "objsec.h"
-#endif // #ifdef CONFIG_KSU_SUSFS
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 14, 0)
 #include <linux/compiler.h>
 #endif
@@ -17,6 +13,8 @@
 #else
 #include <linux/sched.h>
 #endif
+#include <linux/susfs_def.h>
+#include <linux/namei.h>
 #include <asm/current.h>
 
 #include "allowlist.h"
@@ -26,16 +24,14 @@
 #include "kernel_compat.h"
 #include "sucompat.h"
 #include "app_profile.h"
-#ifdef CONFIG_KSU_SYSCALL_HOOK
-#include "kp_util.h"
-#endif
+#include "selinux/selinux.h"
 
 #define SU_PATH "/system/bin/su"
 #define SH_PATH "/system/bin/sh"
 
 bool ksu_su_compat_enabled __read_mostly = true;
 
-static const char su[] = SU_PATH;
+static const char su_path[] = SU_PATH;
 static const char ksud_path[] = KSUD_PATH;
 static const char sh_path[] = SH_PATH;
 
@@ -79,41 +75,32 @@ static char __user *ksud_user_path(void)
 	return userspace_stack_buffer(ksud_path, sizeof(ksud_path));
 }
 
-static inline bool __is_su_allowed(const void *ptr_to_check)
+static inline bool is_su_allowed(void)
 {
-#ifdef CONFIG_KSU_MANUAL_HOOK
 	if (!ksu_su_compat_enabled)
 		return false;
-#endif
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 10, 0)
+
 #ifdef CONFIG_SECCOMP
 	if (likely(!!current->seccomp.mode))
 		return false;
 #endif
-#endif
-	if (!ksu_is_allow_uid_for_current(current_uid().val))
-		return false;
-
-	if (unlikely(!ptr_to_check))
-		return false;
 
 	return true;
 }
-#define is_su_allowed(ptr) __is_su_allowed((const void *)ptr)
 
 static int ksu_sucompat_user_common(const char __user **filename_user,
 				    const char *syscall_name,
 				    const bool escalate)
 {
-#ifdef CONFIG_KSU_SUSFS
-	char path[sizeof(su) + 1] = {0};
-#else
-	char path[sizeof(su)]; // sizeof includes nullterm already!
-	memset(path, 0, sizeof(path));
-#endif
-	ksu_strncpy_from_user_nofault(path, *filename_user, sizeof(path));
+	char path[sizeof(su_path) + 1] = { 0 };
 
-	if (memcmp(path, su, sizeof(su)))
+	if (unlikely(!filename_user))
+		return 0;
+	if (!is_su_allowed())
+		return 0;
+
+	ksu_strncpy_from_user_nofault(path, *filename_user, sizeof(path));
+	if (memcmp(path, su_path, sizeof(su_path)))
 		return 0;
 
 	if (escalate) {
@@ -128,70 +115,63 @@ static int ksu_sucompat_user_common(const char __user **filename_user,
 	return 0;
 }
 
-#ifdef CONFIG_KSU_SYSCALL_HOOK
-static int do_execve_sucompat_for_kp(const char __user **filename_user)
-{
-	char path[sizeof(su) + 1];
-
-	if (!ksu_strncpy_retry(filename_user, path, sizeof(path), true))
-		return 0;
-	if (likely(memcmp(path, su, sizeof(su))))
-		return 0;
-
-	pr_info("sys_execve su found\n");
-	*filename_user = ksud_user_path();
-
-	escape_with_root_profile();
-
-	return 0;
-}
-#endif
-
 int ksu_handle_faccessat(int *dfd, const char __user **filename_user, int *mode,
 			 int *__unused_flags)
 {
-	if (!is_su_allowed(filename_user))
-		return 0;
-
 	return ksu_sucompat_user_common(filename_user, "faccessat", false);
 }
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 1, 0) && defined(CONFIG_KSU_SUSFS)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 1, 0)
 int ksu_handle_stat(int *dfd, struct filename **filename, int *flags)
 {
-	if (!is_su_allowed(filename))
-		return 0;
-	if (unlikely(IS_ERR(filename)))
-		return 0;
-	if (likely(memcmp((*filename)->name, su, sizeof(su))))
+	struct filename *filename_p;
+
+	if (unlikely(!filename))
 		return 0;
 
-	pr_info("ksu_handle_stat: su->sh!\n");
-	memcpy((void *)((*filename)->name), sh_path, sizeof(sh_path));
+	if (!is_su_allowed())
+		return 0;
+
+	filename_p = *filename;
+	if (IS_ERR(filename_p))
+		return 0;
+
+	if (filename_p->name == NULL)
+		return 0;
+
+	if (likely(memcmp(filename_p->name, su_path, sizeof(su_path))))
+		return 0;
+
+	pr_info("vfs_statx: su->sh!\n");
+	memcpy((void *)filename_p->name, sh_path, sizeof(sh_path));
 	return 0;
 }
 #else
 int ksu_handle_stat(int *dfd, const char __user **filename_user, int *flags)
 {
-	if (!is_su_allowed(filename_user))
-		return 0;
-
 	return ksu_sucompat_user_common(filename_user, "newfstatat", false);
 }
 #endif
+
+int ksu_handle_execveat_init(struct filename *filename)
+{
+	if (current->pid != 1 && is_init(get_current_cred())) {
+		if (likely(strstr(filename->name, "/app_process") == NULL &&
+			   strstr(filename->name, "/adbd") == NULL)) {
+			pr_info("hook_manager: unmark %d exec %s\n",
+				current->pid, filename->name);
+			susfs_set_current_proc_umounted();
+		}
+		return 0;
+	}
+	return 1;
+}
 
 int ksu_handle_execve_sucompat(int *fd, const char __user **filename_user,
 			       void *__never_use_argv, void *__never_use_envp,
 			       int *__never_use_flags)
 {
-	if (!is_su_allowed(filename_user))
-		return 0;
-
-#ifdef CONFIG_KSU_SYSCALL_HOOK
-	return do_execve_sucompat_for_kp(filename_user);
-#else
 	return ksu_sucompat_user_common(filename_user, "sys_execve", true);
-#endif
 }
 
 int ksu_handle_execveat_sucompat(int *fd, struct filename **filename_ptr,
@@ -200,14 +180,20 @@ int ksu_handle_execveat_sucompat(int *fd, struct filename **filename_ptr,
 {
 	struct filename *filename;
 
-	if (!is_su_allowed(filename_ptr))
+	if (unlikely(!filename_ptr))
+		return 0;
+
+	if (!is_su_allowed())
 		return 0;
 
 	filename = *filename_ptr;
 	if (IS_ERR(filename))
 		return 0;
 
-	if (likely(memcmp(filename->name, su, sizeof(su))))
+	if (filename->name == NULL)
+		return 0;
+
+	if (likely(memcmp(filename->name, su_path, sizeof(su_path))))
 		return 0;
 
 	pr_info("do_execveat_common su found\n");
@@ -229,7 +215,7 @@ int ksu_handle_execveat(int *fd, struct filename **filename_ptr, void *argv,
 }
 
 // dead code: devpts handling
-int ksu_handle_devpts(struct inode *inode)
+int __maybe_unused ksu_handle_devpts(struct inode *inode)
 {
 	return 0;
 }
