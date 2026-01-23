@@ -515,6 +515,11 @@ ifeq ($(cc-name),clang)
 # Enable hot cold split optimization
 KBUILD_CFLAGS	+= -mllvm -hot-cold-split=true
 
+KBUILD_CFLAGS  += $(call cc-option,-mllvm -enable-ml-inliner=default)
+KBUILD_CFLAGS  += $(call cc-option,-mllvm -regalloc-enable-advisor=default)
+KBUILD_LDFLAGS += $(call cc-option,-mllvm -enable-ml-inliner=default)
+KBUILD_LDFLAGS += $(call cc-option,-mllvm -regalloc-enable-advisor=default)
+
 ifneq ($(CROSS_COMPILE),)
 CLANG_FLAGS	+= --target=$(notdir $(CROSS_COMPILE:%-=%))
 GCC_TOOLCHAIN_DIR := $(dir $(shell which $(CROSS_COMPILE)elfedit))
@@ -734,15 +739,15 @@ endif
 
 ifeq ($(cc-name),clang)
 # Enable Clang Polly optimizations
-KBUILD_CFLAGS	+= -mllvm -polly \
-		  		      -mllvm -polly-run-dce \
-		  		      -mllvm -polly-ast-use-context \
-		  		      -mllvm -polly-invariant-load-hoisting \
-		  		      -mllvm -polly-loopfusion-greedy=1 \
-		  		      -mllvm -polly-postopts=1 \
-		  		      -mllvm -polly-reschedule=1 \
-		  		      -mllvm -polly-run-inliner \
-		  		      -mllvm -polly-vectorizer=stripmine
+KBUILD_CFLAGS  += $(call cc-option, -mllvm -polly)
+KBUILD_CFLAGS  += $(call cc-option, -mllvm -polly-run-dce)
+KBUILD_CFLAGS  += $(call cc-option, -mllvm -polly-ast-use-context)
+KBUILD_CFLAGS  += $(call cc-option, -mllvm -polly-invariant-load-hoisting)
+KBUILD_CFLAGS  += $(call cc-option, -mllvm -polly-loopfusion-greedy=1)
+KBUILD_CFLAGS  += $(call cc-option, -mllvm -polly-postopts=1)
+KBUILD_CFLAGS  += $(call cc-option, -mllvm -polly-reschedule=1)
+KBUILD_CFLAGS  += $(call cc-option, -mllvm -polly-run-inliner)
+KBUILD_CFLAGS  += $(call cc-option,  -mllvm -polly-vectorizer=stripmine)
 endif
 
 # Tell gcc to never replace conditional load with a non-conditional one
