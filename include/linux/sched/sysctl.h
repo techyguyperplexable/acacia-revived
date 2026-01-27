@@ -46,8 +46,8 @@ static unsigned int sysctl_sched_capacity_margin_down;
 static unsigned int sysctl_walt_rtg_cfs_boost_prio;
 static unsigned int sysctl_walt_low_latency_task_threshold;
 static unsigned int sysctl_sched_busy_hyst;
-static unsigned int sysctl_sched_group_upmigrate_pct;
-static unsigned int sysctl_sched_group_downmigrate_pct;
+static unsigned int sysctl_sched_group_upmigrate_pct = 100;
+static unsigned int sysctl_sched_group_downmigrate_pct = 95;
 static unsigned int sysctl_sched_ravg_window_nr_ticks;
 #endif /* CONFIG_PELT_COMPATIBILITY_LAYER */
 

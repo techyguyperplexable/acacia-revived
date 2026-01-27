@@ -462,7 +462,7 @@ static struct ctl_table kern_table[] = {
 	{
 		.procname	= "sched_upmigrate",
 		.data		= &sysctl_sched_capacity_margin_up,
-		.maxlen		= sizeof(unsigned int) *
+		.maxlen		= sizeof(unsigned int),
 		.mode		= 0644,
 		.proc_handler	= sched_updown_migrate_handler,
 	},
