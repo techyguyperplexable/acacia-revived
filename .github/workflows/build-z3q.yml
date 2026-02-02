@@ -1,0 +1,73 @@
+name: build not-kernel CI variant
+
+on:
+    push:
+       branches: [ "main" ]
+    workflow_dispatch:
+
+jobs:
+  build-kernel:
+    runs-on: ubuntu-latest
+
+    env:
+      DEVICE: z3q
+      DEVICE_NAME: Galaxy S20 Ultra
+      KERNEL_NAME: not_kernel
+
+    steps:
+      - name: Check Out
+        uses: actions/checkout@v3
+
+      - name: Set Timezone
+        uses: szenius/set-timezone@v1.2
+        with:
+          timezoneLinux: "America/Sao_Paulo"
+
+      - name: Setting up the environment
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y gcc-aarch64-linux-gnu
+
+      - name: Set Build Start Time
+        run: echo "START_TIME=$(date +%s)" >> $GITHUB_ENV
+
+      - name: Run build script
+        run: |
+          ./build-z3q.sh
+
+      - name: Set Build End Time
+        run: echo "END_TIME=$(date +%s)" >> $GITHUB_ENV
+
+      - name: Calculate Build Duration
+        run: |
+          duration=$((END_TIME - START_TIME))
+          minutes=$((duration / 60))
+          seconds=$((duration % 60))
+          echo "BUILD_DURATION=${minutes}m ${seconds}s" >> $GITHUB_ENV
+
+      - name: Upload to Telegram
+        run: |
+          gitsha1=$(git rev-parse --short HEAD)
+          printf " Localversion: `cat out/include/config/kernel.release`
+           | Clang version: AOSP Clang 18.0.1
+           | Build Date: `date +'%d %B %Y'`
+           | Build commit hash: $gitsha1
+           | SusFS version: v2.0.0
+           | KernelSU version: 33333
+           | SELinux: Enforcing" >> buildDetails.txt
+          buildDetails="`cat buildDetails.txt`"
+          zip_file=$(ls not-CI-*.zip)
+          msg="*not\\-kernel* CI build for the *Galaxy S20 Ultra \\(z3q\\)*
+          * *
+          \`\`\`
+          $buildDetails
+          \`\`\`
+          * * "
+          file="$zip_file"
+          curl -s -F document=@$file "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendDocument" \
+          -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
+          -F "disable_web_page_preview=true" \
+          -F "parse_mode=markdownv2" \
+          -F caption="$msg"
+
+

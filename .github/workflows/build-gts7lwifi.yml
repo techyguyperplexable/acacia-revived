@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      DEVICE: r8q
-      DEVICE_NAME: Galaxy S20 FE
+      DEVICE: gts7lwifi
+      DEVICE_NAME: Galaxy Tab S7 WIFI
       KERNEL_NAME: not_kernel
 
     steps:
@@ -33,7 +33,7 @@ jobs:
 
       - name: Run build script
         run: |
-          ./build.sh
+          ./build-gts7lwifi.sh
 
       - name: Set Build End Time
         run: echo "END_TIME=$(date +%s)" >> $GITHUB_ENV
@@ -57,7 +57,7 @@ jobs:
            | SELinux: Enforcing" >> buildDetails.txt
           buildDetails="`cat buildDetails.txt`"
           zip_file=$(ls not-CI-*.zip)
-          msg="*not\\-kernel* CI build for the *Galaxy S20FE \\(r8q\\)*
+          msg="*not\\-kernel* CI build for the *Galaxy Tab S7 WIFI \\(gts7lwifi\\)*
           * *
           \`\`\`
           $buildDetails
