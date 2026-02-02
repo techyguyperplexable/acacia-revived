@@ -1,4 +1,4 @@
-ccflags-y += -Wformat -Wno-vla-extension -Wno-vla
+ccflags-y += -Wno-format -Wno-format-security -Wno-vla-extension -Wno-vla
 
 ifeq ($(CONFIG_SAMSUNG_PRODUCT_SHIP), y)
   obj-$(CONFIG_TOUCHSCREEN_SEC_TS_Y79A)   += sec_ts.o sec_ts_fw.o sec_ts_fn.o sec_ts_ioctl.o

@@ -167,7 +167,7 @@ static ssize_t secure_touch_enable_store(struct device *dev,
 		}
 
 	} else {
-		input_err(true, &ts->client->dev, "%s: unsupport value:%d\n", __func__, data);
+		input_err(true, &ts->client->dev, "%s: unsupport value:%lu\n", __func__, data);
 		return -EINVAL;
 	}
 
@@ -1763,7 +1763,7 @@ static ssize_t sec_ts_tsp_cmoffset_all_read(struct file *file, char __user *buf,
 
 		retlen = strlen(ts->cmoffset_all_proc);
 
-		input_info(true, &ts->client->dev, "%s : retlen[%d], retlen_sdc[%d], retlen_main[%d] retlen_miscal[%d]\n",
+		input_info(true, &ts->client->dev, "%s : retlen[%zd], retlen_sdc[%zd], retlen_main[%zd] retlen_miscal[%zd]\n",
 						__func__, retlen, retlen_sdc, retlen_main, retlen_miscal);
 	}
 
@@ -1772,7 +1772,7 @@ static ssize_t sec_ts_tsp_cmoffset_all_read(struct file *file, char __user *buf,
 
 	count = min(len, (size_t)(retlen - pos));
 
-	input_info(true, &ts->client->dev, "%s : total:%d pos:%d count:%d\n", __func__, retlen, pos, count);
+	input_info(true, &ts->client->dev, "%s : total:%zd pos:%lld count:%zd\n", __func__, retlen, pos, count);
 
 	if (copy_to_user(buf, ts->cmoffset_all_proc + pos, count)) {
 		input_err(true, &ts->client->dev, "%s : copy_to_user error!\n", __func__, retlen, pos);
@@ -1782,7 +1782,7 @@ static ssize_t sec_ts_tsp_cmoffset_all_read(struct file *file, char __user *buf,
 	*offset += count;
 
 	if (count < len) {
-		input_info(true, &ts->client->dev, "%s : print all & free cmoffset_all_proc [%d][%d]\n",
+		input_info(true, &ts->client->dev, "%s : print all & free cmoffset_all_proc [%zd][%zd]\n",
 					__func__, retlen, offset);
 		if (ts->cmoffset_all_proc)
 			kfree(ts->cmoffset_all_proc);
@@ -1890,16 +1890,14 @@ static ssize_t sec_ts_tsp_fail_hist_read(struct file *file, char __user *buf,
 	return sec_ts_tsp_fail_hist_all_read(file, buf, len, offset);
 }
 
-static const struct file_operations tsp_cmoffset_all_file_ops = {
-	.owner = THIS_MODULE,
-	.read = sec_ts_tsp_cmoffset_read,
-	.llseek = generic_file_llseek,
+static const struct proc_ops tsp_cmoffset_all_file_ops = {
+	.proc_read = sec_ts_tsp_cmoffset_read,
+	.proc_lseek = generic_file_llseek,
 };
 
-static const struct file_operations tsp_fail_hist_all_file_ops = {
-	.owner = THIS_MODULE,
-	.read = sec_ts_tsp_fail_hist_read,
-	.llseek = generic_file_llseek,
+static const struct proc_ops tsp_fail_hist_all_file_ops = {
+	.proc_read = sec_ts_tsp_fail_hist_read,
+	.proc_lseek = generic_file_llseek,
 };
 
 static void sec_ts_init_proc(struct sec_ts_data *ts)
