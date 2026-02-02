@@ -1,6 +1,8 @@
 name: build not-kernel CI variant bloomxq
 
 on:
+    push:
+       branches: [ "main" ]
     workflow_dispatch:
 
 jobs:
