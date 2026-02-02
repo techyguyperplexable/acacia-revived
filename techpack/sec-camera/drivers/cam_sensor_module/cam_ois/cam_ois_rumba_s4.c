@@ -1347,8 +1347,8 @@ int cam_ois_gyro_sensor_calibration(struct cam_ois_ctrl_t *o_ctrl,
 
 	cam_ois_get_selftest_data(o_ctrl, &X_ZRO, &Y_ZRO);
 
-	XGZERO = (X_ZRO) / 8.75 * 1000;
-	YGZERO = (Y_ZRO) / 8.75 * 1000;
+	XGZERO = div_s64((s64)X_ZRO * 1000 * 100, 875);
+	YGZERO = div_s64((s64)Y_ZRO * 1000 * 100, 875);
 
 	if((X_ZRO > 15 || X_ZRO < -15)&&(Y_ZRO > 15 || Y_ZRO < -15)) result = 0;
 	else result = 1;

@@ -2695,9 +2695,9 @@ int cam_ois_gyro_sensor_calibration(struct cam_ois_ctrl_t *o_ctrl,
 	if (YGZERO > 0x7FFF)
 		YGZERO = -((YGZERO ^ 0xFFFF) + 1);
 	CAM_DBG(CAM_OIS, "YGZERO 0x%x", YGZERO);
-
-	*raw_data_x = XGZERO * 1000 / scale_factor;
-	*raw_data_y = YGZERO * 1000 / scale_factor;
+	
+	*raw_data_x = div_s64((s64)XGZERO * 1000, scale_factor);
+	*raw_data_y = div_s64((s64)YGZERO * 1000, scale_factor);
 	CAM_INFO(CAM_OIS, "result %d, raw_data_x %ld, raw_data_y %ld", result, *raw_data_x, *raw_data_y);
 
 	CAM_ERR(CAM_OIS, "Exit");
