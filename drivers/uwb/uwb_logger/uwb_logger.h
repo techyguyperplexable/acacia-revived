@@ -15,19 +15,10 @@
 #include <linux/sched.h>
 #endif
 
-
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 6, 0))
 #define sec_input_proc_ops(ops_name, ops_owner, read_fn)	\
 	const struct proc_ops ops_name = {						\
 		.proc_read = read_fn,								\
 	}
-#else
-#define sec_input_proc_ops(ops_name, ops_owner, read_fn)	\
-	const struct file_operations ops_name = {				\
-		.owner = ops_owner,									\
-		.read = read_fn,									\
-	}
-#endif
 
 #ifndef _UWB_LOGGER_H_
 #define _UWB_LOGGER_H_
