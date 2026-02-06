@@ -1,4 +1,4 @@
-CONFIG_LOCALVERSION="-not:Construção"
+CONFIG_LOCALVERSION="-not:X-ecutioner"
 # CONFIG_AUDIT is not set
 CONFIG_NO_HZ=y
 CONFIG_HZ_250=y
