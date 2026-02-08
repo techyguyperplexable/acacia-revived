@@ -14,7 +14,6 @@
 #include "kona-sec-z3q-pinctrl-r12.dtsi"
 
 #include "../drivers/kona-sec-z3q-display-r01.dtsi"
-#include "../drivers/kona-sec-z3q-mst-r12.dtsi"
 #include "../drivers/battery-rx-data-z3q-lsi.dtsi"
 
 &soc {
