@@ -9,19 +9,32 @@ NC='\033[0m'
 export TG_BOT_TOKEN=
 export TG_CHAT_ID=
 
+tg_post_msg() {
+    curl -s -X POST "https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage" \
+        -d chat_id="${TG_CHAT_ID}" \
+        -d parse_mode="HTML" \
+        -d text="$1"
+}
 
 # ===== AnyKernel3 =====
 AK3_REPO="https://github.com/skye-tachyon/AnyKernel3"
 AK3_BRANCH="gts7l"
 AK3_DIR="$(pwd)/android/AnyKernel3"
 
-ZIPNAME="not-CI-$(date '+%Y%m%d').zip"
+ZIPNAME="Acacia-CI-$(date '+%Y%m%d').zip"
 TC_DIR="$(pwd)/tc/clang-r522817"
 DEFCONFIG="vendor/kona-not_defconfig vendor/samsung/kona-sec-not.config vendor/samsung/gts7l.config"
 
 OUT_DIR="$(pwd)/out"
 BOOT_DIR="$OUT_DIR/arch/arm64/boot"
 DTS_DIR="$BOOT_DIR/dts/vendor/qcom"
+
+KERNEL_VERSION=$(make kernelversion)
+CHANGELOG=$(git log --oneline -n 10)
+
+if [ -n "$TG_BOT_TOKEN" ] && [ -n "$TG_CHAT_ID" ]; then
+    tg_post_msg "<b>🔨 Build Started</b>%0A<b>Device:</b> gts7l%0A<b>Kernel Version:</b> ${KERNEL_VERSION}%0A<b>Compiler:</b> Clang r522817"
+fi
 
 if test -z "$(git rev-parse --show-cdup 2>/dev/null)" &&
    head=$(git rev-parse --verify HEAD 2>/dev/null); then
@@ -102,5 +115,6 @@ if [ -n "$TG_BOT_TOKEN" ] && [ -n "$TG_CHAT_ID" ]; then
     echo -e "\n${BLUE}Uploading to Telegram...${NC}"
     curl -s -F document=@"$ZIPNAME" "https://api.telegram.org/bot${TG_BOT_TOKEN}/sendDocument" \
         -F chat_id="${TG_CHAT_ID}" \
-        -F caption="Build completed in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s). | Zip: $ZIPNAME"
+        -F parse_mode="HTML" \
+        -F caption="<b>✅ Build Finished</b>%0A<b>Device:</b> gts7l%0A<b>Kernel Version:</b> ${KERNEL_VERSION}%0A<b>Time:</b> $((SECONDS / 60))m $((SECONDS % 60))s%0A<b>Zip:</b> $ZIPNAME%0A%0A<b>Changelog:</b>%0A<code>${CHANGELOG}</code>"
 fi
