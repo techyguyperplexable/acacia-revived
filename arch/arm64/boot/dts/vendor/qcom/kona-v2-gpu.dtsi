@@ -8,18 +8,18 @@
 	gpu_opp_table_v2: gpu-opp-table_v2 {
 		compatible = "operating-points-v2";
 		
-		opp-925000000 {
-			opp-hz = /bits/ 64 <925000000>;
-			opp-microvolt = <416>;
+		opp-855000000 {
+			opp-hz = /bits/ 64 <855000000>;
+			opp-microvolt = <290>;
 		};
 		
-		opp-840000000 {
-			opp-hz = /bits/ 64 <840000000>;
-			opp-microvolt = <288>;
+		opp-778000000 {
+			opp-hz = /bits/ 64 <778000000>;
+			opp-microvolt = <275>;
 		};
 
-		opp-670000000 {
-			opp-hz = /bits/ 64 <670000000>;
+		opp-682978000 {
+			opp-hz = /bits/ 64 <682978000>;
 			opp-microvolt = <263>;
 		};
 
@@ -75,7 +75,7 @@
 
 			qcom,gpu-pwrlevel@0 {
 				reg = <0>;
-				qcom,gpu-freq = <925000000>;
+				qcom,gpu-freq = <855000000>;
 				qcom,bus-freq-ddr7 = <12>;
 				qcom,bus-min-ddr7 = <12>;
 				qcom,bus-max-ddr7 = <12>;
@@ -89,7 +89,7 @@
 
 			qcom,gpu-pwrlevel@1 {
 				reg = <1>;
-				qcom,gpu-freq = <840000000>;
+				qcom,gpu-freq = <778000000>;
 				qcom,bus-freq-ddr7 = <12>;
 				qcom,bus-min-ddr7 = <12>;
 				qcom,bus-max-ddr7 = <12>;
@@ -103,7 +103,7 @@
 
 			qcom,gpu-pwrlevel@2 {
 				reg = <2>;
-				qcom,gpu-freq = <670000000>;
+				qcom,gpu-freq = <682978000>;
 				qcom,bus-freq-ddr7 = <11>;
 				qcom,bus-min-ddr7 = <11>;
 				qcom,bus-max-ddr7 = <12>;
@@ -203,7 +203,7 @@
 
 			qcom,gpu-pwrlevel@0 {
 				reg = <0>;
-				qcom,gpu-freq = <670000000>;
+				qcom,gpu-freq = <682978000>;
 				qcom,bus-freq-ddr7 = <11>;
 				qcom,bus-min-ddr7 = <11>;
 				qcom,bus-max-ddr7 = <12>;
@@ -303,7 +303,7 @@
 
 			qcom,gpu-pwrlevel@0 {
 				reg = <0>;
-				qcom,gpu-freq = <670000000>;
+				qcom,gpu-freq = <682978000>;
 				qcom,bus-freq-ddr7 = <11>;
 				qcom,bus-min-ddr7 = <11>;
 				qcom,bus-max-ddr7 = <12>;
