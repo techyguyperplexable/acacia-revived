@@ -988,7 +988,7 @@ config HIGHATOMIC_PAGEBLOCKS
 	  highatomic pageblocks.
 	  This value limits max number of highatomic pageblocks.
 
-source "mm/sec_mm/Kconfig"
+# source "mm/sec_mm/Kconfig"
 
 source "mm/damon/Kconfig"
 
