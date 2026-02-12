@@ -6,6 +6,9 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
+export TG_BOT_TOKEN=
+export TG_CHAT_ID=
+
 
 # ===== AnyKernel3 =====
 AK3_REPO="https://github.com/skye-tachyon/AnyKernel3"
@@ -94,3 +97,10 @@ cd ..
 
 echo -e "\n${GREEN}Completed in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s)!${NC}"
 echo -e "${GREEN}Zip: $ZIPNAME${NC}"
+
+if [ -n "$TG_BOT_TOKEN" ] && [ -n "$TG_CHAT_ID" ]; then
+    echo -e "\n${BLUE}Uploading to Telegram...${NC}"
+    curl -s -F document=@"$ZIPNAME" "https://api.telegram.org/bot${TG_BOT_TOKEN}/sendDocument" \
+        -F chat_id="${TG_CHAT_ID}" \
+        -F caption="Build completed in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s). | Zip: $ZIPNAME"
+fi
