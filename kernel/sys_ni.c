@@ -66,6 +66,11 @@ COND_SYSCALL_COMPAT(epoll_pwait);
 COND_SYSCALL(epoll_pwait2);
 COND_SYSCALL_COMPAT(epoll_pwait2);
 
+/* fs/io_acacia.c */
+COND_SYSCALL(io_acacia_setup);
+COND_SYSCALL(io_acacia_enter);
+COND_SYSCALL(io_acacia_register);
+
 /* fs/fcntl.c */
 
 /* fs/inotify_user.c */

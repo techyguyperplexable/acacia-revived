@@ -829,6 +829,12 @@ __SYSCALL(__NR_close_range, sys_close_range)
 __SYSCALL(__NR_process_madvise, sys_process_madvise)
 #define __NR_epoll_pwait2 441
 __SYSCALL(__NR_epoll_pwait2, compat_sys_epoll_pwait2)
+#define __NR_io_acacia_setup 442
+__SYSCALL(__NR_io_acacia_setup, sys_io_acacia_setup)
+#define __NR_io_acacia_enter 443
+__SYSCALL(__NR_io_acacia_enter, sys_io_acacia_enter)
+#define __NR_io_acacia_register 444
+__SYSCALL(__NR_io_acacia_register, sys_io_acacia_register)
 
 /*
  * Please add new compat syscalls above this comment and update

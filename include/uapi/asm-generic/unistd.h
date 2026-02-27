@@ -747,8 +747,15 @@ __SYSCALL(__NR_process_madvise, sys_process_madvise)
 #define __NR_epoll_pwait2 441
 __SC_COMP(__NR_epoll_pwait2, sys_epoll_pwait2, compat_sys_epoll_pwait2)
 
+#define __NR_io_acacia_setup 442
+__SYSCALL(__NR_io_acacia_setup, sys_io_acacia_setup)
+#define __NR_io_acacia_enter 443
+__SYSCALL(__NR_io_acacia_enter, sys_io_acacia_enter)
+#define __NR_io_acacia_register 444
+__SYSCALL(__NR_io_acacia_register, sys_io_acacia_register)
+
 #undef __NR_syscalls
-#define __NR_syscalls 442
+#define __NR_syscalls 445
 
 /*
  * 32 bit systems traditionally used different

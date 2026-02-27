@@ -1307,4 +1307,9 @@ static inline unsigned int ksys_personality(unsigned int personality)
 	return old;
 }
 
+/* fs/io_acacia.c */
+asmlinkage long sys_io_acacia_setup(u32 entries, struct io_acacia_params __user *p);
+asmlinkage long sys_io_acacia_enter(unsigned int fd, u32 to_submit, u32 min_complete, u32 flags, const sigset_t __user *sig, size_t sigsz);
+asmlinkage long sys_io_acacia_register(unsigned int fd, unsigned int opcode, void __user *arg, u32 nr_args);
+
 #endif

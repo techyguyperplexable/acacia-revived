@@ -4,6 +4,13 @@
 
 menu "File systems"
 
+config IO_ACACIA
+	bool "Enable io_acacia asynchronous I/O subsystem"
+	default y
+	help
+	  This enables io_acacia, an asynchronous I/O subsystem modeled
+	  after io_uring for older kernels.
+
 # Use unaligned word dcache accesses
 config DCACHE_WORD_ACCESS
        bool
