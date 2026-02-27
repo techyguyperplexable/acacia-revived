@@ -22,7 +22,7 @@ AK3_BRANCH="r8q"
 AK3_DIR="$(pwd)/android/AnyKernel3"
 
 ZIPNAME="Acacia-CI-$(date '+%Y%m%d').zip"
-TC_DIR="$(pwd)/tc/clang-r522817"
+# TC_DIR="$(pwd)/tc/clang-r522817"
 DEFCONFIG="vendor/kona-not_defconfig vendor/samsung/kona-sec-not.config vendor/samsung/r8q.config"
 
 OUT_DIR="$(pwd)/out"
@@ -41,15 +41,15 @@ if test -z "$(git rev-parse --show-cdup 2>/dev/null)" &&
     ZIPNAME="${ZIPNAME::-4}-$(echo $head | cut -c1-8)-r8q.zip"
 fi
 
-export PATH="$TC_DIR/bin:$PATH"
+# export PATH="$TC_DIR/bin:$PATH"
 
-if ! [ -d "$TC_DIR" ]; then
-    echo -e "${YELLOW}AOSP clang not found! Cloning to $TC_DIR...${NC}"
-    if ! git clone --depth=1 -b 18 https://gitlab.com/ThankYouMario/android_prebuilts_clang-standalone "$TC_DIR"; then
-        echo -e "${RED}Cloning failed! Aborting...${NC}"
-        exit 1
-    fi
-fi
+# if ! [ -d "$TC_DIR" ]; then
+    #echo -e "${YELLOW}AOSP clang not found! Cloning to $TC_DIR...${NC}"
+   # if ! git clone --depth=1 -b 18 https://gitlab.com/ThankYouMario/android_prebuilts_clang-standalone "$TC_DIR"; then
+    #    echo -e "${RED}Cloning failed! Aborting...${NC}"
+   #     exit 1
+  #  fi
+# fi
 
 mkdir -p out
 echo -e "${YELLOW}building with: $DEFCONFIG${NC}"
