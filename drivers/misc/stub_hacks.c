@@ -61,8 +61,7 @@ static struct devfreq *df_cpu7;
 
 static int __init stub_hacks_init(void)
 {
-	pr_info("Loading stub hacks for sched_busy_hyst_ns and cpu-ddr-latfloor
-");
+	pr_info("Loading stub hacks for sched_busy_hyst_ns and cpu-ddr-latfloor\n");
 	dummy_sysctl_header = register_sysctl_table(dummy_root_table);
 
 	pdev_cpu0 = platform_device_register_simple("soc:qcom,cpu0-cpu-ddr-latfloor", -1, NULL, 0);
