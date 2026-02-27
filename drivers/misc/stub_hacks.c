@@ -5,6 +5,8 @@
 #include <linux/platform_device.h>
 #include <linux/devfreq.h>
 
+#include <linux/pm_opp.h>
+
 static unsigned int dummy_sched_busy_hyst_ns = 0;
 static unsigned int dummy_sched_boost = 0;
 static unsigned int dummy_sched_upmigrate = 0;
@@ -13,6 +15,13 @@ static unsigned int dummy_sched_group_upmigrate = 0;
 static unsigned int dummy_sched_group_downmigrate = 0;
 static unsigned int dummy_sched_min_task_util_for_boost = 0;
 static unsigned int dummy_sched_min_task_util_for_colocation = 0;
+
+static struct class *dummy_input_booster_class;
+static struct device *dummy_touch_dev;
+
+static ssize_t dummy_show(struct device *dev, struct device_attribute *attr, char *buf) { return sprintf(buf, "0\n"); }
+static ssize_t dummy_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t count) { return count; }
+static DEVICE_ATTR(head, 0644, dummy_show, dummy_store);
 
 static struct ctl_table dummy_kern_table[] = {
        {
@@ -133,46 +142,55 @@ static struct devfreq *df_llcc_4;
 static struct devfreq *df_llcc_6;
 static struct devfreq *df_llcc_7;
 
+static struct devfreq *register_dummy_devfreq(const char *name, struct platform_device **pdev_out)
+{
+       struct platform_device *pdev;
+       struct devfreq *df;
+
+       pdev = platform_device_register_simple(name, -1, NULL, 0);
+       if (IS_ERR(pdev))
+               return ERR_CAST(pdev);
+
+       dev_pm_opp_add(&pdev->dev, 0, 0);
+       dev_pm_opp_add(&pdev->dev, 1000000, 0);
+
+       df = devfreq_add_device(&pdev->dev, &dummy_profile, "performance", NULL);
+       if (IS_ERR(df)) {
+               platform_device_unregister(pdev);
+               return df;
+       }
+
+       *pdev_out = pdev;
+       return df;
+}
+
 static int __init stub_hacks_init(void)
 {
        pr_info("Loading stub hacks for sched_busy_hyst_ns and cpu-ddr-latfloor\n");
        dummy_sysctl_header = register_sysctl_table(dummy_root_table);
 
-       pdev_cpu0 = platform_device_register_simple("soc:qcom,cpu0-cpu-ddr-latfloor", -1, NULL, 0);
-       if (!IS_ERR(pdev_cpu0)) df_cpu0 = devfreq_add_device(&pdev_cpu0->dev, &dummy_profile, "performance", NULL);
+       dummy_input_booster_class = class_create(THIS_MODULE, "input_booster");
+       if (!IS_ERR(dummy_input_booster_class)) {
+           dummy_touch_dev = device_create(dummy_input_booster_class, NULL, 0, NULL, "touch");
+           if (!IS_ERR(dummy_touch_dev)) {
+               device_create_file(dummy_touch_dev, &dev_attr_head);
+           }
+       }
 
-       pdev_cpu4 = platform_device_register_simple("soc:qcom,cpu4-cpu-ddr-latfloor", -1, NULL, 0);
-       if (!IS_ERR(pdev_cpu4)) df_cpu4 = devfreq_add_device(&pdev_cpu4->dev, &dummy_profile, "performance", NULL);
+       df_cpu0 = register_dummy_devfreq("soc:qcom,cpu0-cpu-ddr-latfloor", &pdev_cpu0);
+       df_cpu4 = register_dummy_devfreq("soc:qcom,cpu4-cpu-ddr-latfloor", &pdev_cpu4);
+       df_cpu6 = register_dummy_devfreq("soc:qcom,cpu6-cpu-ddr-latfloor", &pdev_cpu6);
+       df_cpu7 = register_dummy_devfreq("soc:qcom,cpu7-cpu-ddr-latfloor", &pdev_cpu7);
 
-       pdev_cpu6 = platform_device_register_simple("soc:qcom,cpu6-cpu-ddr-latfloor", -1, NULL, 0);
-       if (!IS_ERR(pdev_cpu6)) df_cpu6 = devfreq_add_device(&pdev_cpu6->dev, &dummy_profile, "performance", NULL);
+       df_l3_0 = register_dummy_devfreq("soc:qcom,cpu0-cpu-l3-lat", &pdev_l3_0);
+       df_l3_4 = register_dummy_devfreq("soc:qcom,cpu4-cpu-l3-lat", &pdev_l3_4);
+       df_l3_6 = register_dummy_devfreq("soc:qcom,cpu6-cpu-l3-lat", &pdev_l3_6);
+       df_l3_7 = register_dummy_devfreq("soc:qcom,cpu7-cpu-l3-lat", &pdev_l3_7);
 
-       pdev_cpu7 = platform_device_register_simple("soc:qcom,cpu7-cpu-ddr-latfloor", -1, NULL, 0);
-       if (!IS_ERR(pdev_cpu7)) df_cpu7 = devfreq_add_device(&pdev_cpu7->dev, &dummy_profile, "performance", NULL);
-
-       pdev_l3_0 = platform_device_register_simple("soc:qcom,cpu0-cpu-l3-lat", -1, NULL, 0);
-       if (!IS_ERR(pdev_l3_0)) df_l3_0 = devfreq_add_device(&pdev_l3_0->dev, &dummy_profile, "performance", NULL);
-
-       pdev_l3_4 = platform_device_register_simple("soc:qcom,cpu4-cpu-l3-lat", -1, NULL, 0);
-       if (!IS_ERR(pdev_l3_4)) df_l3_4 = devfreq_add_device(&pdev_l3_4->dev, &dummy_profile, "performance", NULL);
-
-       pdev_l3_6 = platform_device_register_simple("soc:qcom,cpu6-cpu-l3-lat", -1, NULL, 0);
-       if (!IS_ERR(pdev_l3_6)) df_l3_6 = devfreq_add_device(&pdev_l3_6->dev, &dummy_profile, "performance", NULL);
-
-       pdev_l3_7 = platform_device_register_simple("soc:qcom,cpu7-cpu-l3-lat", -1, NULL, 0);
-       if (!IS_ERR(pdev_l3_7)) df_l3_7 = devfreq_add_device(&pdev_l3_7->dev, &dummy_profile, "performance", NULL);
-
-       pdev_llcc_0 = platform_device_register_simple("soc:qcom,cpu0-llcc-lat", -1, NULL, 0);
-       if (!IS_ERR(pdev_llcc_0)) df_llcc_0 = devfreq_add_device(&pdev_llcc_0->dev, &dummy_profile, "performance", NULL);
-
-       pdev_llcc_4 = platform_device_register_simple("soc:qcom,cpu4-llcc-lat", -1, NULL, 0);
-       if (!IS_ERR(pdev_llcc_4)) df_llcc_4 = devfreq_add_device(&pdev_llcc_4->dev, &dummy_profile, "performance", NULL);
-
-       pdev_llcc_6 = platform_device_register_simple("soc:qcom,cpu6-llcc-lat", -1, NULL, 0);
-       if (!IS_ERR(pdev_llcc_6)) df_llcc_6 = devfreq_add_device(&pdev_llcc_6->dev, &dummy_profile, "performance", NULL);
-
-       pdev_llcc_7 = platform_device_register_simple("soc:qcom,cpu7-llcc-lat", -1, NULL, 0);
-       if (!IS_ERR(pdev_llcc_7)) df_llcc_7 = devfreq_add_device(&pdev_llcc_7->dev, &dummy_profile, "performance", NULL);
+       df_llcc_0 = register_dummy_devfreq("soc:qcom,cpu0-llcc-lat", &pdev_llcc_0);
+       df_llcc_4 = register_dummy_devfreq("soc:qcom,cpu4-llcc-lat", &pdev_llcc_4);
+       df_llcc_6 = register_dummy_devfreq("soc:qcom,cpu6-llcc-lat", &pdev_llcc_6);
+       df_llcc_7 = register_dummy_devfreq("soc:qcom,cpu7-llcc-lat", &pdev_llcc_7);
 
        return 0;
 }
