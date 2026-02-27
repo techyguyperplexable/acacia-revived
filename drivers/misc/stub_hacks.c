@@ -22,6 +22,8 @@ static struct device *dummy_touch_dev;
 static ssize_t dummy_show(struct device *dev, struct device_attribute *attr, char *buf) { return sprintf(buf, "0\n"); }
 static ssize_t dummy_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t count) { return count; }
 static DEVICE_ATTR(head, 0644, dummy_show, dummy_store);
+static DEVICE_ATTR(min_freq, 0644, dummy_show, dummy_store);
+static DEVICE_ATTR(max_freq, 0644, dummy_show, dummy_store);
 
 static struct ctl_table dummy_kern_table[] = {
        {
@@ -159,6 +161,9 @@ static struct devfreq *register_dummy_devfreq(const char *name, struct platform_
                platform_device_unregister(pdev);
                return df;
        }
+       
+       device_create_file(&df->dev, &dev_attr_min_freq);
+       device_create_file(&df->dev, &dev_attr_max_freq);
 
        *pdev_out = pdev;
        return df;
