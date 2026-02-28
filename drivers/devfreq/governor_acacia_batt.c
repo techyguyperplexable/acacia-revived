@@ -1,11 +1,12 @@
+// SPDX-License-Identifier: GPL-2.0
 /*
- *  drivers/devfreq/governor_acacia_batt.c
+ * drivers/devfreq/governor_acacia_batt.c
  *
- *  Copyright (C) 2024 Acacia
+ * Devfreq governor that locks device frequency to minimum.
+ * Handles start and resume events to ensure frequency is
+ * re-applied after suspend cycles.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation.
+ * Copyright (C) 2024 Acacia
  */
 
 #include <linux/devfreq.h>
@@ -13,12 +14,9 @@
 #include "governor.h"
 
 static int devfreq_acacia_batt_func(struct devfreq *df,
-				  unsigned long *freq)
+				    unsigned long *freq)
 {
-	/*
-	 * Sets the frequency at the minimum available frequency.
-	 */
-	*freq = df->min_freq;
+	*freq = DEVFREQ_MIN_FREQ;
 	return 0;
 }
 
@@ -27,10 +25,18 @@ static int devfreq_acacia_batt_handler(struct devfreq *devfreq,
 {
 	int ret = 0;
 
-	if (event == DEVFREQ_GOV_START) {
+	switch (event) {
+	case DEVFREQ_GOV_START:
+	case DEVFREQ_GOV_RESUME:
 		mutex_lock(&devfreq->lock);
 		ret = update_devfreq(devfreq);
 		mutex_unlock(&devfreq->lock);
+		break;
+	case DEVFREQ_GOV_STOP:
+	case DEVFREQ_GOV_SUSPEND:
+		break;
+	default:
+		break;
 	}
 
 	return ret;
@@ -38,6 +44,7 @@ static int devfreq_acacia_batt_handler(struct devfreq *devfreq,
 
 static struct devfreq_governor devfreq_acacia_batt = {
 	.name = "acacia_batt",
+	.immutable = 0,
 	.get_target_freq = devfreq_acacia_batt_func,
 	.event_handler = devfreq_acacia_batt_handler,
 };
@@ -55,8 +62,9 @@ static void __exit devfreq_acacia_batt_exit(void)
 	ret = devfreq_remove_governor(&devfreq_acacia_batt);
 	if (ret)
 		pr_err("%s: failed remove governor %d\n", __func__, ret);
-
-	return;
 }
 module_exit(devfreq_acacia_batt_exit);
+
+MODULE_AUTHOR("techyguyperplexable <objecting@objecting.org>");
+MODULE_DESCRIPTION("Acacia Devfreq Battery Governor - Minimum device frequency");
 MODULE_LICENSE("GPL");

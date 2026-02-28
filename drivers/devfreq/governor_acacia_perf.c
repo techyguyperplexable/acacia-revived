@@ -1,11 +1,12 @@
+// SPDX-License-Identifier: GPL-2.0
 /*
- *  drivers/devfreq/governor_acacia_perf.c
+ * drivers/devfreq/governor_acacia_perf.c
  *
- *  Copyright (C) 2024 Acacia
+ * Devfreq governor that locks device frequency to maximum.
+ * Handles start and resume events to ensure frequency is
+ * re-applied after suspend cycles.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation.
+ * Copyright (C) 2024 Acacia
  */
 
 #include <linux/devfreq.h>
@@ -15,13 +16,7 @@
 static int devfreq_acacia_perf_func(struct devfreq *df,
 				    unsigned long *freq)
 {
-	/*
-	 * Sets the frequency at the maximum available frequency.
-	 */
-	if (!df->max_freq)
-		*freq = UINT_MAX;
-	else
-		*freq = df->max_freq;
+	*freq = DEVFREQ_MAX_FREQ;
 	return 0;
 }
 
@@ -30,10 +25,18 @@ static int devfreq_acacia_perf_handler(struct devfreq *devfreq,
 {
 	int ret = 0;
 
-	if (event == DEVFREQ_GOV_START) {
+	switch (event) {
+	case DEVFREQ_GOV_START:
+	case DEVFREQ_GOV_RESUME:
 		mutex_lock(&devfreq->lock);
 		ret = update_devfreq(devfreq);
 		mutex_unlock(&devfreq->lock);
+		break;
+	case DEVFREQ_GOV_STOP:
+	case DEVFREQ_GOV_SUSPEND:
+		break;
+	default:
+		break;
 	}
 
 	return ret;
@@ -41,6 +44,7 @@ static int devfreq_acacia_perf_handler(struct devfreq *devfreq,
 
 static struct devfreq_governor devfreq_acacia_perf = {
 	.name = "acacia_perf",
+	.immutable = 0,
 	.get_target_freq = devfreq_acacia_perf_func,
 	.event_handler = devfreq_acacia_perf_handler,
 };
@@ -58,8 +62,9 @@ static void __exit devfreq_acacia_perf_exit(void)
 	ret = devfreq_remove_governor(&devfreq_acacia_perf);
 	if (ret)
 		pr_err("%s: failed remove governor %d\n", __func__, ret);
-
-	return;
 }
 module_exit(devfreq_acacia_perf_exit);
+
+MODULE_AUTHOR("techyguyperplexable <objecting@objecting.org>");
+MODULE_DESCRIPTION("Acacia Devfreq Performance Governor - Maximum device frequency");
 MODULE_LICENSE("GPL");
