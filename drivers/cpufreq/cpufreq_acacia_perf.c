@@ -1,62 +1,67 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * CPUFreq governor: acacia-perf
+ *
+ * Locks CPU frequency to the policy maximum with cached frequency
+ * tracking to avoid redundant driver calls.
+ *
+ * Copyright (C) 2024 techyguyperplexable
+ */
+
+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+
 #include <linux/cpufreq.h>
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/slab.h>
 
-struct acacia_perf_policy {
-	struct cpufreq_policy *policy;
+struct acacia_perf_data {
 	unsigned int cached_max;
 };
 
-static DEFINE_PER_CPU(struct acacia_perf_policy *, acacia_perf_policy);
-
 static int cpufreq_gov_acacia_perf_init(struct cpufreq_policy *policy)
 {
-	struct acacia_perf_policy *ap;
+	struct acacia_perf_data *data;
 
-	ap = kzalloc(sizeof(*ap), GFP_KERNEL);
-	if (!ap)
+	data = kzalloc(sizeof(*data), GFP_KERNEL);
+	if (!data)
 		return -ENOMEM;
 
-	ap->policy = policy;
-	ap->cached_max = policy->max;
-	per_cpu(acacia_perf_policy, policy->cpu) = ap;
+	data->cached_max = policy->max;
+	policy->governor_data = data;
 
 	return 0;
 }
 
 static void cpufreq_gov_acacia_perf_exit(struct cpufreq_policy *policy)
 {
-	struct acacia_perf_policy *ap = per_cpu(acacia_perf_policy, policy->cpu);
-
-	if (ap) {
-		per_cpu(acacia_perf_policy, policy->cpu) = NULL;
-		kfree(ap);
-	}
+	kfree(policy->governor_data);
+	policy->governor_data = NULL;
 }
 
 static int cpufreq_gov_acacia_perf_start(struct cpufreq_policy *policy)
 {
-	struct acacia_perf_policy *ap = per_cpu(acacia_perf_policy, policy->cpu);
+	struct acacia_perf_data *data = policy->governor_data;
 
-	if (ap)
-		ap->cached_max = policy->max;
+	data->cached_max = policy->max;
 
+	pr_debug("setting policy%u to %u kHz\n", policy->cpu, policy->max);
 	__cpufreq_driver_target(policy, policy->max, CPUFREQ_RELATION_H);
 	return 0;
 }
 
 static void cpufreq_gov_acacia_perf_limits(struct cpufreq_policy *policy)
 {
-	struct acacia_perf_policy *ap = per_cpu(acacia_perf_policy, policy->cpu);
+	struct acacia_perf_data *data = policy->governor_data;
+	unsigned int target = policy->max;
 
-	if (likely(ap && policy->max == ap->cached_max && policy->cur == policy->max))
+	if (likely(target == data->cached_max && policy->cur == target))
 		return;
 
-	if (ap)
-		ap->cached_max = policy->max;
+	data->cached_max = target;
 
-	__cpufreq_driver_target(policy, policy->max, CPUFREQ_RELATION_H);
+	pr_debug("updating policy%u to %u kHz\n", policy->cpu, target);
+	__cpufreq_driver_target(policy, target, CPUFREQ_RELATION_H);
 }
 
 static struct cpufreq_governor cpufreq_gov_acacia_perf = {

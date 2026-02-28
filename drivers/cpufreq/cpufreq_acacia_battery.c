@@ -1,62 +1,67 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * CPUFreq governor: acacia-battery
+ *
+ * Locks CPU frequency to the policy minimum with cached frequency
+ * tracking to avoid redundant driver calls.
+ *
+ * Copyright (C) 2024 techyguyperplexable
+ */
+
+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+
 #include <linux/cpufreq.h>
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/slab.h>
 
-struct acacia_battery_policy {
-	struct cpufreq_policy *policy;
+struct acacia_battery_data {
 	unsigned int cached_min;
 };
 
-static DEFINE_PER_CPU(struct acacia_battery_policy *, acacia_battery_policy);
-
 static int cpufreq_gov_acacia_battery_init(struct cpufreq_policy *policy)
 {
-	struct acacia_battery_policy *ap;
+	struct acacia_battery_data *data;
 
-	ap = kzalloc(sizeof(*ap), GFP_KERNEL);
-	if (!ap)
+	data = kzalloc(sizeof(*data), GFP_KERNEL);
+	if (!data)
 		return -ENOMEM;
 
-	ap->policy = policy;
-	ap->cached_min = policy->min;
-	per_cpu(acacia_battery_policy, policy->cpu) = ap;
+	data->cached_min = policy->min;
+	policy->governor_data = data;
 
 	return 0;
 }
 
 static void cpufreq_gov_acacia_battery_exit(struct cpufreq_policy *policy)
 {
-	struct acacia_battery_policy *ap = per_cpu(acacia_battery_policy, policy->cpu);
-
-	if (ap) {
-		per_cpu(acacia_battery_policy, policy->cpu) = NULL;
-		kfree(ap);
-	}
+	kfree(policy->governor_data);
+	policy->governor_data = NULL;
 }
 
 static int cpufreq_gov_acacia_battery_start(struct cpufreq_policy *policy)
 {
-	struct acacia_battery_policy *ap = per_cpu(acacia_battery_policy, policy->cpu);
+	struct acacia_battery_data *data = policy->governor_data;
 
-	if (ap)
-		ap->cached_min = policy->min;
+	data->cached_min = policy->min;
 
+	pr_debug("setting policy%u to %u kHz\n", policy->cpu, policy->min);
 	__cpufreq_driver_target(policy, policy->min, CPUFREQ_RELATION_L);
 	return 0;
 }
 
 static void cpufreq_gov_acacia_battery_limits(struct cpufreq_policy *policy)
 {
-	struct acacia_battery_policy *ap = per_cpu(acacia_battery_policy, policy->cpu);
+	struct acacia_battery_data *data = policy->governor_data;
+	unsigned int target = policy->min;
 
-	if (likely(ap && policy->min == ap->cached_min && policy->cur == policy->min))
+	if (likely(target == data->cached_min && policy->cur == target))
 		return;
 
-	if (ap)
-		ap->cached_min = policy->min;
+	data->cached_min = target;
 
-	__cpufreq_driver_target(policy, policy->min, CPUFREQ_RELATION_L);
+	pr_debug("updating policy%u to %u kHz\n", policy->cpu, target);
+	__cpufreq_driver_target(policy, target, CPUFREQ_RELATION_L);
 }
 
 static struct cpufreq_governor cpufreq_gov_acacia_battery = {
