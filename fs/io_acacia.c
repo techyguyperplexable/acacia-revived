@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: GPL-2.0 */
 #include <linux/kernel.h>
 #include <linux/init.h>
 #include <linux/errno.h>
@@ -10,8 +11,10 @@
 #include <linux/slab.h>
 #include <linux/workqueue.h>
 #include <linux/fs.h>
+#include <linux/uio.h>
 #include <linux/wait.h>
 #include <linux/sched/signal.h>
+#include <linux/poll.h>
 #include <uapi/linux/io_acacia.h>
 
 struct io_sq_ring {
@@ -47,9 +50,11 @@ struct io_ring_ctx {
 	
 	spinlock_t cq_lock;
 	wait_queue_head_t wait;
+	struct workqueue_struct *wq;
 	
 	u32 cached_sq_head;
 	u32 cached_cq_tail;
+	u32 cq_overflow;
 };
 
 struct io_acacia_work {
@@ -90,6 +95,8 @@ static int io_acacia_mmap(struct file *file, struct vm_area_struct *vma)
 		return -EINVAL;
 	}
 
+	vma->vm_flags |= VM_DONTEXPAND | VM_DONTDUMP;
+
 	pfn = virt_to_phys(ptr) >> PAGE_SHIFT;
 	return remap_pfn_range(vma, vma->vm_start, pfn, size, vma->vm_page_prot);
 }
@@ -97,7 +104,13 @@ static int io_acacia_mmap(struct file *file, struct vm_area_struct *vma)
 static int io_acacia_release(struct inode *inode, struct file *file)
 {
 	struct io_ring_ctx *ctx = file->private_data;
-	
+
+	/* drain all pending work before tearing down */
+	if (ctx->wq) {
+		flush_workqueue(ctx->wq);
+		destroy_workqueue(ctx->wq);
+	}
+
 	io_mem_free(ctx->sq_ring, ctx->sq_ring_sz);
 	io_mem_free(ctx->cq_ring, ctx->cq_ring_sz);
 	io_mem_free(ctx->sqes, ctx->sqes_sz);
@@ -106,20 +119,46 @@ static int io_acacia_release(struct inode *inode, struct file *file)
 	return 0;
 }
 
+static __poll_t io_acacia_poll(struct file *file, struct poll_table_struct *wait)
+{
+	struct io_ring_ctx *ctx = file->private_data;
+	__poll_t mask = 0;
+
+	poll_wait(file, &ctx->wait, wait);
+
+	/*
+	 * Return EPOLLIN | EPOLLRDNORM if there are any events in the CQ ring.
+	 */
+	if (smp_load_acquire(&ctx->cq_ring->tail) != smp_load_acquire(&ctx->cq_ring->head))
+		mask |= EPOLLIN | EPOLLRDNORM;
+
+	return mask;
+}
+
 static const struct file_operations io_acacia_fops = {
 	.mmap = io_acacia_mmap,
 	.release = io_acacia_release,
+	.poll = io_acacia_poll,
 };
 
 static void io_acacia_cqring_fill_event(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 flags)
 {
 	struct io_cq_ring *ring = ctx->cq_ring;
-	u32 tail, mask = ctx->cq_entries - 1;
+	u32 tail, head, mask = ctx->cq_entries - 1;
 	struct io_acacia_cqe *cqe;
 
 	spin_lock(&ctx->cq_lock);
 	tail = ctx->cached_cq_tail;
-	
+	head = smp_load_acquire(&ring->head);
+
+	/* check if the CQ ring is full */
+	if (tail - head >= ctx->cq_entries) {
+		ctx->cq_overflow++;
+		ring->overflow++;
+		spin_unlock(&ctx->cq_lock);
+		return;
+	}
+
 	cqe = &ring->cqes[tail & mask];
 	cqe->user_data = user_data;
 	cqe->res = res;
@@ -179,6 +218,47 @@ static ssize_t io_acacia_read_write(struct io_acacia_sqe *sqe, int is_write)
 	return ret;
 }
 
+static ssize_t io_acacia_read_write_v(struct io_acacia_sqe *sqe, int is_write)
+{
+	struct fd f = fdget(sqe->fd);
+	struct file *file = f.file;
+	ssize_t ret = -EBADF;
+	struct iovec iovstack[UIO_FASTIOV];
+	struct iovec *iovec = iovstack;
+	struct iov_iter iter;
+	struct kiocb kiocb;
+	
+	if (!file)
+		return ret;
+
+	ret = import_iovec(is_write ? WRITE : READ,
+			   (const struct iovec __user *)(unsigned long)sqe->addr,
+			   sqe->len, UIO_FASTIOV, &iovec, &iter);
+	if (ret < 0)
+		goto out;
+
+	init_sync_kiocb(&kiocb, file);
+	kiocb.ki_pos = sqe->off;
+
+	if (is_write) {
+		if (file->f_op->write_iter)
+			ret = file->f_op->write_iter(&kiocb, &iter);
+		else
+			ret = -EINVAL;
+	} else {
+		if (file->f_op->read_iter)
+			ret = file->f_op->read_iter(&kiocb, &iter);
+		else
+			ret = -EINVAL;
+	}
+
+	if (iovec != iovstack)
+		kfree(iovec);
+out:
+	fdput(f);
+	return ret;
+}
+
 static void io_acacia_worker(struct work_struct *work)
 {
 	struct io_acacia_work *iow = container_of(work, struct io_acacia_work, work);
@@ -191,12 +271,29 @@ static void io_acacia_worker(struct work_struct *work)
 		res = 0;
 		break;
 	case IORING_OP_READV:
+		res = io_acacia_read_write_v(sqe, 0);
+		break;
 	case IORING_OP_READ:
 		res = io_acacia_read_write(sqe, 0);
 		break;
 	case IORING_OP_WRITEV:
+		res = io_acacia_read_write_v(sqe, 1);
+		break;
 	case IORING_OP_WRITE:
 		res = io_acacia_read_write(sqe, 1);
+		break;
+	case IORING_OP_FSYNC: {
+		struct fd f = fdget(sqe->fd);
+		if (f.file) {
+			res = vfs_fsync(f.file, sqe->fsync_flags & IORING_FSYNC_DATASYNC);
+			fdput(f);
+		} else {
+			res = -EBADF;
+		}
+		break;
+	}
+	default:
+		res = -EOPNOTSUPP;
 		break;
 	}
 
@@ -213,7 +310,10 @@ SYSCALL_DEFINE2(io_acacia_setup, u32, entries,
 	
 	if (!entries || entries > 4096)
 		return -EINVAL;
-		
+
+	/* round up to power-of-2; ring_mask = entries-1 requires it */
+	entries = roundup_pow_of_two(entries);
+	
 	if (copy_from_user(&p, params, sizeof(p)))
 		return -EFAULT;
 		
@@ -226,6 +326,13 @@ SYSCALL_DEFINE2(io_acacia_setup, u32, entries,
 	
 	spin_lock_init(&ctx->cq_lock);
 	init_waitqueue_head(&ctx->wait);
+
+	ctx->wq = alloc_workqueue("io_acacia-%d", WQ_UNBOUND | WQ_MEM_RECLAIM,
+				  0, current->pid);
+	if (!ctx->wq) {
+		kfree(ctx);
+		return -ENOMEM;
+	}
 	
 	ctx->sq_ring_sz = PAGE_ALIGN(sizeof(struct io_sq_ring) + ctx->sq_entries * sizeof(u32));
 	ctx->cq_ring_sz = PAGE_ALIGN(sizeof(struct io_cq_ring) + ctx->cq_entries * sizeof(struct io_acacia_cqe));
@@ -326,13 +433,18 @@ SYSCALL_DEFINE6(io_acacia_enter, unsigned int, fd, u32, to_submit,
 		sqe = &ctx->sqes[index];
 		
 		iow = kmalloc(sizeof(*iow), GFP_KERNEL);
-		if (iow) {
-			iow->ctx = ctx;
-			memcpy(&iow->sqe, sqe, sizeof(struct io_acacia_sqe));
-			INIT_WORK(&iow->work, io_acacia_worker);
-			schedule_work(&iow->work);
-			submitted++;
+		if (!iow) {
+			/* post an error CQE so userspace doesn't hang */
+			io_acacia_cqring_fill_event(ctx, sqe->user_data, -ENOMEM, 0);
+			head++;
+			to_submit--;
+			continue;
 		}
+		iow->ctx = ctx;
+		memcpy(&iow->sqe, sqe, sizeof(struct io_acacia_sqe));
+		INIT_WORK(&iow->work, io_acacia_worker);
+		queue_work(ctx->wq, &iow->work);
+		submitted++;
 		
 		head++;
 		to_submit--;
@@ -343,9 +455,14 @@ SYSCALL_DEFINE6(io_acacia_enter, unsigned int, fd, u32, to_submit,
 		smp_store_release(&ctx->sq_ring->head, head);
 	}
 	
-	if (min_complete) {
-		wait_event_interruptible(ctx->wait, 
+	if (flags & IORING_ENTER_GETEVENTS && min_complete) {
+		int ret = wait_event_interruptible(ctx->wait, 
 			(ctx->cached_cq_tail - smp_load_acquire(&ctx->cq_ring->head)) >= min_complete);
+		if (ret) {
+			if (!submitted) {
+				submitted = ret;
+			}
+		}
 	}
 	
 	fdput(f);
@@ -355,5 +472,31 @@ SYSCALL_DEFINE6(io_acacia_enter, unsigned int, fd, u32, to_submit,
 SYSCALL_DEFINE4(io_acacia_register, unsigned int, fd, unsigned int, opcode,
 		void __user *, arg, u32, nr_args)
 {
-	return -ENOSYS;
+	struct fd f;
+	int ret = -EOPNOTSUPP;
+
+	f = fdget(fd);
+	if (!f.file)
+		return -EBADF;
+
+	if (f.file->f_op != &io_acacia_fops) {
+		fdput(f);
+		return -EOPNOTSUPP;
+	}
+
+	switch (opcode) {
+	case IORING_REGISTER_BUFFERS:
+	case IORING_UNREGISTER_BUFFERS:
+	case IORING_REGISTER_FILES:
+	case IORING_UNREGISTER_FILES:
+		/* Not fully implemented in this prototype */
+		ret = -EOPNOTSUPP;
+		break;
+	default:
+		ret = -EINVAL;
+		break;
+	}
+
+	fdput(f);
+	return ret;
 }
