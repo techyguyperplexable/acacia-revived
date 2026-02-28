@@ -1750,27 +1750,17 @@ static ssize_t disksize_store(struct device *dev,
 		struct device_attribute *attr, const char *buf, size_t len)
 {
 	u64 disksize;
-	u64 disksize_last;
 	struct zcomp *comp;
 	struct zram *zram = dev_to_zram(dev);
 	int err;
 
-	disksize = memparse(buf, NULL);
-        disksize_last = disksize;
-	if (!disksize)
-		return -EINVAL;
+	disksize = (u64)16 * SZ_1G;
 
 	down_write(&zram->init_lock);
 	if (init_done(zram)) {
 		pr_info("Cannot change disksize for initialized device\n");
 		err = -EBUSY;
 		goto out_unlock;
-	}
-
-	if (disksize_last < (u64)4096 * SZ_1M) {
-		disksize = (u64)4096 * SZ_1M;
-	} else {
-		disksize = disksize_last;
 	}
 
 	disksize = PAGE_ALIGN(disksize);
