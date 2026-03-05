@@ -154,6 +154,7 @@ u32 ksu_get_ksu_file_sid(void)
 #define KERNEL_PRIV_APP_DOMAIN "u:r:priv_app:s0:c512,c768"
 
 u32 susfs_ksu_sid = 0;
+u32 susfs_kernel_sid = 0;
 u32 susfs_init_sid = 0;
 u32 susfs_zygote_sid = 0;
 u32 susfs_priv_app_sid = 0;
