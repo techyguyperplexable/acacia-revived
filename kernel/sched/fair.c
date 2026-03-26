@@ -6070,6 +6070,7 @@ static void dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
 		dequeue_entity(cfs_rq, se, flags);
 
 		cfs_rq->h_nr_running--;
+		cfs_rq->idle_h_nr_running -= idle_h_nr_running;
 
 		/* end evaluation on encountering a throttled cfs_rq */
 		if (cfs_rq_throttled(cfs_rq))
