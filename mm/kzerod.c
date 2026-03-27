@@ -199,19 +199,15 @@ static void drain_zeroed_page(void)
 	unsigned long prev_zero;
 
 	prev_zero = nr_prezeroed;
-restart:
 	spin_lock(&prezeroed_lock);
 	list_for_each_entry_safe(page, next, &prezeroed_list, lru) {
-		if (trylock_page(page)) {
-			list_del(&page->lru);
-			unset_kzerod_page(page);
-			unlock_page(page);
-			__free_pages(page, 0);
-			nr_prezeroed--;
-		} else {
-			spin_unlock(&prezeroed_lock);
-			goto restart;
-		}
+		if (!trylock_page(page))
+			continue;
+		list_del(&page->lru);
+		unset_kzerod_page(page);
+		unlock_page(page);
+		__free_pages(page, 0);
+		nr_prezeroed--;
 	}
 	spin_unlock(&prezeroed_lock);
 
