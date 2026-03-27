@@ -593,6 +593,7 @@ static int rc_init_fs(size_t pagesize)
 	spin_lock(&rbincache.pool_lock);
 	if (rbincache.num_pools == MAX_RC_POOLS) {
 		pr_err("Cannot create new pool (limit:%u)\n", MAX_RC_POOLS);
+		kfree(rcpool);
 		ret = -EPERM;
 		goto out_unlock;
 	}
