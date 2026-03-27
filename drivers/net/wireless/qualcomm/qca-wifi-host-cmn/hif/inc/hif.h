@@ -131,7 +131,7 @@ struct CE_state;
 #define QCA_NAPI_DEF_SCALE_BIN_SHIFT 2
 #endif /* NAPI_YIELD_BUDGET_BASED */
 
-#define QCA_NAPI_BUDGET    64
+#define QCA_NAPI_BUDGET    128
 #define QCA_NAPI_DEF_SCALE  \
 	(1 << QCA_NAPI_DEF_SCALE_BIN_SHIFT)
 
