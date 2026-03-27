@@ -171,7 +171,7 @@ struct page *alloc_zeroed_page(void)
 		trace_printk("kzerod: %d to %d\n", kzerod_state,
 			     KZEROD_RUNNING);
 #endif
-		kzerod_state = KZEROD_RUNNING,
+		kzerod_state = KZEROD_RUNNING;
 		wake_up(&kzerod_wait);
 	}
 
@@ -1031,7 +1031,7 @@ static int kzerod_enabled_param_set(const char *val,
 		return error;
 
 	if (!prev && kzerod_enabled) {
-		kzerod_state = KZEROD_RUNNING,
+		kzerod_state = KZEROD_RUNNING;
 		wake_up(&kzerod_wait);
 #if defined(CONFIG_TRACING) && defined(DEBUG)
 		trace_printk("%s\n", "kzerod: enabled");
