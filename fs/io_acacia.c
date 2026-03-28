@@ -114,22 +114,29 @@ static const struct file_operations io_acacia_fops = {
 static void io_acacia_cqring_fill_event(struct io_ring_ctx *ctx, u64 user_data, s32 res, u32 flags)
 {
 	struct io_cq_ring *ring = ctx->cq_ring;
-	u32 tail, mask = ctx->cq_entries - 1;
+	u32 tail, head, mask = ctx->cq_entries - 1;
 	struct io_acacia_cqe *cqe;
 
 	spin_lock(&ctx->cq_lock);
 	tail = ctx->cached_cq_tail;
-	
+	head = smp_load_acquire(&ring->head);
+
+	if (tail - head >= ctx->cq_entries) {
+		ring->overflow++;
+		spin_unlock(&ctx->cq_lock);
+		return;
+	}
+
 	cqe = &ring->cqes[tail & mask];
 	cqe->user_data = user_data;
 	cqe->res = res;
 	cqe->flags = flags;
-	
+
 	ctx->cached_cq_tail++;
 	/* ensure cqe is written before tail update */
 	smp_store_release(&ring->tail, ctx->cached_cq_tail);
 	spin_unlock(&ctx->cq_lock);
-	
+
 	wake_up_all(&ctx->wait);
 }
 
