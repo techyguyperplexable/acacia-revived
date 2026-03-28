@@ -1012,8 +1012,10 @@ static int __init audit_tree_init(void)
 	int i;
 
 	audit_tree_group = fsnotify_alloc_group(&audit_tree_ops);
-	if (IS_ERR(audit_tree_group))
+	if (IS_ERR(audit_tree_group)) {
 		audit_panic("cannot initialize fsnotify group for rectree watches");
+		return PTR_ERR(audit_tree_group);
+	}
 
 	for (i = 0; i < HASH_SIZE; i++)
 		INIT_LIST_HEAD(&chunk_hash_heads[i]);
