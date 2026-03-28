@@ -47,7 +47,8 @@ struct io_ring_ctx {
 	
 	spinlock_t cq_lock;
 	wait_queue_head_t wait;
-	
+	struct workqueue_struct *wq;
+
 	u32 cached_sq_head;
 	u32 cached_cq_tail;
 };
@@ -97,12 +98,14 @@ static int io_acacia_mmap(struct file *file, struct vm_area_struct *vma)
 static int io_acacia_release(struct inode *inode, struct file *file)
 {
 	struct io_ring_ctx *ctx = file->private_data;
-	
+
+	flush_workqueue(ctx->wq);
+	destroy_workqueue(ctx->wq);
 	io_mem_free(ctx->sq_ring, ctx->sq_ring_sz);
 	io_mem_free(ctx->cq_ring, ctx->cq_ring_sz);
 	io_mem_free(ctx->sqes, ctx->sqes_sz);
 	kfree(ctx);
-	
+
 	return 0;
 }
 
@@ -233,7 +236,13 @@ SYSCALL_DEFINE2(io_acacia_setup, u32, entries,
 	
 	spin_lock_init(&ctx->cq_lock);
 	init_waitqueue_head(&ctx->wait);
-	
+
+	ctx->wq = alloc_workqueue("io_acacia-%d", WQ_UNBOUND | WQ_MEM_RECLAIM, 0, ctx->sq_entries);
+	if (!ctx->wq) {
+		kfree(ctx);
+		return -ENOMEM;
+	}
+
 	ctx->sq_ring_sz = PAGE_ALIGN(sizeof(struct io_sq_ring) + ctx->sq_entries * sizeof(u32));
 	ctx->cq_ring_sz = PAGE_ALIGN(sizeof(struct io_cq_ring) + ctx->cq_entries * sizeof(struct io_acacia_cqe));
 	ctx->sqes_sz = PAGE_ALIGN(ctx->sq_entries * sizeof(struct io_acacia_sqe));
@@ -290,6 +299,7 @@ err:
 	io_mem_free(ctx->sq_ring, ctx->sq_ring_sz);
 	io_mem_free(ctx->cq_ring, ctx->cq_ring_sz);
 	io_mem_free(ctx->sqes, ctx->sqes_sz);
+	destroy_workqueue(ctx->wq);
 	kfree(ctx);
 	return ret;
 }
@@ -342,7 +352,7 @@ SYSCALL_DEFINE6(io_acacia_enter, unsigned int, fd, u32, to_submit,
 		iow->ctx = ctx;
 		memcpy(&iow->sqe, sqe, sizeof(struct io_acacia_sqe));
 		INIT_WORK(&iow->work, io_acacia_worker);
-		schedule_work(&iow->work);
+		queue_work(ctx->wq, &iow->work);
 		submitted++;
 
 		head++;
