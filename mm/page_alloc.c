@@ -4736,8 +4736,10 @@ retry:
 		goto nopage;
 
 	/* small boost when memory is low so allocation latency doesn't suffer too much */
-	cpu_input_boost_kick_max(100);
-	devfreq_boost_kick_max(DEVFREQ_CPU_LLCC_DDR_BW, 100);
+	if (retry_loop_count <= 1) {
+		cpu_input_boost_kick_max(100);
+		devfreq_boost_kick_max(DEVFREQ_CPU_LLCC_DDR_BW, 100);
+	}
 
 	/*
 	 * Do not retry costly high order allocations unless they are
