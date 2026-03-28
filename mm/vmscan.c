@@ -1777,20 +1777,22 @@ static unsigned long isolate_lru_pages(unsigned long nr_to_scan,
 	     scan < nr_to_scan && nr_taken < nr_to_scan && !list_empty(src);
 	     total_scan++) {
 		struct page *page;
+		int zid;
 
 		page = lru_to_page(src);
 		prefetchw_prev_lru_page(page, src, flags);
 
 		VM_BUG_ON_PAGE(!PageLRU(page), page);
 
+		zid = page_zonenum(page);
 #ifdef CONFIG_HUGEPAGE_POOL
-		if (page_zonenum(page) > sc->reclaim_idx
+		if (zid > sc->reclaim_idx
 		    || PageTransHuge(page)) {
 #else
-		if (page_zonenum(page) > sc->reclaim_idx) {
+		if (zid > sc->reclaim_idx) {
 #endif
 			list_move(&page->lru, &pages_skipped);
-			nr_skipped[page_zonenum(page)]++;
+			nr_skipped[zid]++;
 			continue;
 		}
 
@@ -1805,7 +1807,7 @@ static unsigned long isolate_lru_pages(unsigned long nr_to_scan,
 		case 0:
 			nr_pages = hpage_nr_pages(page);
 			nr_taken += nr_pages;
-			nr_zone_taken[page_zonenum(page)] += nr_pages;
+			nr_zone_taken[zid] += nr_pages;
 			list_move(&page->lru, dst);
 			break;
 
