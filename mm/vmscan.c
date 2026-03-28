@@ -2146,10 +2146,24 @@ static unsigned move_active_pages_to_lru(struct lruvec *lruvec,
 	struct page *page;
 	int nr_moved = 0;
 	LIST_HEAD(compound_pages);
+#ifdef CONFIG_MEMCG
+	struct mem_cgroup *prev_memcg = NULL;
+#endif
 
 	while (!list_empty(list)) {
 		page = lru_to_page(list);
+#ifdef CONFIG_MEMCG
+		/*
+		 * Consecutive pages often share a memcg. Skip the full
+		 * lruvec lookup when it hasn't changed.
+		 */
+		if (page->mem_cgroup != prev_memcg) {
+			lruvec = mem_cgroup_page_lruvec(page, pgdat);
+			prev_memcg = page->mem_cgroup;
+		}
+#else
 		lruvec = mem_cgroup_page_lruvec(page, pgdat);
+#endif
 
 		VM_BUG_ON_PAGE(PageLRU(page), page);
 		list_del(&page->lru);
