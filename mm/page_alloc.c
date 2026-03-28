@@ -4569,11 +4569,9 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
 	unsigned long pages_reclaimed = 0;
 	int retry_loop_count = 0;
 	unsigned long jiffies_s = jiffies;
-	u64 utime, stime_s, stime_e, stime_d;
+	u64 utime, stime_s = 0, stime_e, stime_d;
 	bool woke_kswapd = false;
 	bool used_vmpressure = false;
-
-	task_cputime(current, &utime, &stime_s);
 
 	/*
 	 * We also sanity check to catch abuse of atomic reserves being used by
@@ -4844,8 +4842,12 @@ nopage:
 	}
 fail:
 got_pg:
-	task_cputime(current, &utime, &stime_e);
-	stime_d = stime_e - stime_s;
+	if (jiffies - jiffies_s > msecs_to_jiffies(256)) {
+		task_cputime(current, &utime, &stime_e);
+		stime_d = stime_e - stime_s;
+	} else {
+		stime_d = 0;
+	}
 	if (stime_d / NSEC_PER_MSEC > 256) {
 		pg_data_t *pgdat;
 
