@@ -10800,7 +10800,7 @@ dp_txrx_post_data_stall_event(struct cdp_soc_t *soc_hdl,
  *
  * Return: peer instance pointer
  */
-static void *
+static void * __maybe_unused
 dp_peer_get_ref_find_by_addr(struct cdp_pdev *dev, uint8_t *peer_mac_addr,
 			     enum peer_debug_id_type debug_id)
 {
