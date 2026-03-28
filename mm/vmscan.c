@@ -2145,6 +2145,7 @@ static unsigned move_active_pages_to_lru(struct lruvec *lruvec,
 	struct pglist_data *pgdat = lruvec_pgdat(lruvec);
 	struct page *page;
 	int nr_moved = 0;
+	LIST_HEAD(compound_pages);
 
 	while (!list_empty(list)) {
 		page = lru_to_page(list);
@@ -2159,16 +2160,24 @@ static unsigned move_active_pages_to_lru(struct lruvec *lruvec,
 			del_page_from_lru_list(page, lruvec);
 			__clear_page_lru_flags(page);
 
-			if (unlikely(PageCompound(page))) {
-				spin_unlock_irq(&pgdat->lru_lock);
-				mem_cgroup_uncharge(page);
-				(*get_compound_page_dtor(page))(page);
-				spin_lock_irq(&pgdat->lru_lock);
-			} else
+			if (unlikely(PageCompound(page)))
+				list_add(&page->lru, &compound_pages);
+			else
 				list_add(&page->lru, pages_to_free);
 		} else {
 			nr_moved += hpage_nr_pages(page);
 		}
+	}
+
+	if (!list_empty(&compound_pages)) {
+		spin_unlock_irq(&pgdat->lru_lock);
+		while (!list_empty(&compound_pages)) {
+			page = lru_to_page(&compound_pages);
+			list_del(&page->lru);
+			mem_cgroup_uncharge(page);
+			(*get_compound_page_dtor(page))(page);
+		}
+		spin_lock_irq(&pgdat->lru_lock);
 	}
 
 	if (!is_active_lru(lru)) {
