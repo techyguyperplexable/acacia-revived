@@ -2030,7 +2030,7 @@ shrink_inactive_list(unsigned long nr_to_scan, struct lruvec *lruvec,
 			return SWAP_CLUSTER_MAX;
 
 		/* wait a bit for the reclaimer. */
-		msleep(100);
+		msleep(10);
 		stalled = true;
 	}
 
