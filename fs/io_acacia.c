@@ -326,14 +326,18 @@ SYSCALL_DEFINE6(io_acacia_enter, unsigned int, fd, u32, to_submit,
 		sqe = &ctx->sqes[index];
 		
 		iow = kmalloc(sizeof(*iow), GFP_KERNEL);
-		if (iow) {
-			iow->ctx = ctx;
-			memcpy(&iow->sqe, sqe, sizeof(struct io_acacia_sqe));
-			INIT_WORK(&iow->work, io_acacia_worker);
-			schedule_work(&iow->work);
-			submitted++;
+		if (!iow) {
+			io_acacia_cqring_fill_event(ctx, sqe->user_data, -ENOMEM, 0);
+			head++;
+			to_submit--;
+			continue;
 		}
-		
+		iow->ctx = ctx;
+		memcpy(&iow->sqe, sqe, sizeof(struct io_acacia_sqe));
+		INIT_WORK(&iow->work, io_acacia_worker);
+		schedule_work(&iow->work);
+		submitted++;
+
 		head++;
 		to_submit--;
 	}
