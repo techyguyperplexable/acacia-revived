@@ -10409,13 +10409,15 @@ static int ufs_read_device_desc_data(struct ufs_hba *hba)
 	u8 *health_buf = NULL;
 	u8 serial_num_index;
 
-	if (hba->desc_size.dev_desc) {
-		desc_buf = kmalloc(hba->desc_size.dev_desc, GFP_KERNEL);
-		if (!desc_buf) {
-			dev_err(hba->dev,
-				"%s: Failed to allocate desc_buf\n", __func__);
-			return -ENOMEM;
-		}
+	if (!hba->desc_size.dev_desc) {
+		dev_err(hba->dev, "%s: dev_desc size is zero\n", __func__);
+		return -EINVAL;
+	}
+	desc_buf = kmalloc(hba->desc_size.dev_desc, GFP_KERNEL);
+	if (!desc_buf) {
+		dev_err(hba->dev,
+			"%s: Failed to allocate desc_buf\n", __func__);
+		return -ENOMEM;
 	}
 	err = ufshcd_read_device_desc(hba, desc_buf, hba->desc_size.dev_desc);
 	if (err)
@@ -10436,14 +10438,17 @@ static int ufs_read_device_desc_data(struct ufs_hba *hba)
 		desc_buf[DEVICE_DESC_PARAM_SPEC_VER + 1];
 	serial_num_index = desc_buf[DEVICE_DESC_PARAM_SN];
 
-	if (hba->desc_size.str_desc) {
-		str_desc_buf = kmalloc(hba->desc_size.str_desc + 1, GFP_KERNEL);
-		if (!str_desc_buf) {
-			err = -ENOMEM;
-			dev_err(hba->dev,
-				"%s: Failed to allocate str_desc_buf\n", __func__);
-			goto out;
-		}
+	if (!hba->desc_size.str_desc) {
+		dev_err(hba->dev, "%s: str_desc size is zero\n", __func__);
+		err = -EINVAL;
+		goto out;
+	}
+	str_desc_buf = kmalloc(hba->desc_size.str_desc + 1, GFP_KERNEL);
+	if (!str_desc_buf) {
+		err = -ENOMEM;
+		dev_err(hba->dev,
+			"%s: Failed to allocate str_desc_buf\n", __func__);
+		goto out;
 	}
 	memset(str_desc_buf, 0, hba->desc_size.str_desc + 1);
 	err = ufshcd_read_string_desc(hba, serial_num_index,
@@ -10455,14 +10460,17 @@ static int ufs_read_device_desc_data(struct ufs_hba *hba)
 
 	ufs_set_sec_unique_number(hba, str_desc_buf, desc_buf);
 
-	if (hba->desc_size.hlth_desc) {
-		health_buf = kmalloc(hba->desc_size.hlth_desc, GFP_KERNEL);
-		if (!health_buf) {
-			err = -ENOMEM;
-			dev_err(hba->dev,
-				"%s: Failed to allocate health_buf\n", __func__);
-			goto out;
-		}
+	if (!hba->desc_size.hlth_desc) {
+		dev_err(hba->dev, "%s: hlth_desc size is zero\n", __func__);
+		err = -EINVAL;
+		goto out;
+	}
+	health_buf = kmalloc(hba->desc_size.hlth_desc, GFP_KERNEL);
+	if (!health_buf) {
+		err = -ENOMEM;
+		dev_err(hba->dev,
+			"%s: Failed to allocate health_buf\n", __func__);
+		goto out;
 	}
 	err = ufshcd_read_desc(hba, QUERY_DESC_IDN_HEALTH, 0, health_buf,
 			hba->desc_size.hlth_desc);
