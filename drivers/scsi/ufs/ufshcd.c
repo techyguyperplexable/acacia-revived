@@ -12502,71 +12502,71 @@ static ssize_t ufshcd_hw_reset_info_show(struct device *dev,
 	if (host->hw_reset_count == 0)
 		return curr_len;
 
-	curr_len += snprintf(buf + curr_len, PAGE_SIZE, "last_time:%lu.\n", host->last_hw_reset);
-	curr_len += snprintf(buf + curr_len, PAGE_SIZE, "saved:0x%x, saved_uic:0x%x.\n",
+	curr_len += snprintf(buf + curr_len, PAGE_SIZE - curr_len, "last_time:%lu.\n", host->last_hw_reset);
+	curr_len += snprintf(buf + curr_len, PAGE_SIZE - curr_len, "saved:0x%x, saved_uic:0x%x.\n",
 			host->hw_reset_saved_err, host->hw_reset_saved_uic_err);
-	curr_len += snprintf(buf + curr_len, PAGE_SIZE, "outstanding task:0x%lx, req:0x%lx.\n",
+	curr_len += snprintf(buf + curr_len, PAGE_SIZE - curr_len, "outstanding task:0x%lx, req:0x%lx.\n",
 			host->hw_reset_outstanding_tasks, host->hw_reset_outstanding_reqs);
 
 #ifdef CONFIG_DEBUG_FS
-	curr_len += snprintf(buf + curr_len, PAGE_SIZE, "ufs_stats\n err_stats :");
+	curr_len += snprintf(buf + curr_len, PAGE_SIZE - curr_len, "ufs_stats\n err_stats :");
 	for (i = 0; i < UFS_ERR_MAX; i++)
-		curr_len += snprintf(buf + curr_len, PAGE_SIZE, " %02d:%d", i,
+		curr_len += snprintf(buf + curr_len, PAGE_SIZE - curr_len, " %02d:%d", i,
 				host->hw_reset_ufs_stats.err_stats[i]);
-	curr_len += snprintf(buf + curr_len, PAGE_SIZE, "\n");
+	curr_len += snprintf(buf + curr_len, PAGE_SIZE - curr_len, "\n");
 #endif
 
-	curr_len += snprintf(buf + curr_len, PAGE_SIZE, "ufs_stats\n pa_stats :\n");
+	curr_len += snprintf(buf + curr_len, PAGE_SIZE - curr_len, "ufs_stats\n pa_stats :\n");
 	for (i = 0; i < UIC_ERR_REG_HIST_LENGTH; i++) {
 		int p = (i + host->hw_reset_ufs_stats.pa_err.pos - 1) % UIC_ERR_REG_HIST_LENGTH;
 
 		if (host->hw_reset_ufs_stats.pa_err.reg[p] == 0)
 			continue;
-		curr_len += snprintf(buf + curr_len, PAGE_SIZE, "%02d:0x%x at %lld us\n", i,
+		curr_len += snprintf(buf + curr_len, PAGE_SIZE - curr_len, "%02d:0x%x at %lld us\n", i,
 			host->hw_reset_ufs_stats.pa_err.reg[p],
 			ktime_to_us(host->hw_reset_ufs_stats.pa_err.tstamp[p]));
 	}
 
-	curr_len += snprintf(buf + curr_len, PAGE_SIZE, " dl_stats :\n");
+	curr_len += snprintf(buf + curr_len, PAGE_SIZE - curr_len, " dl_stats :\n");
 	for (i = 0; i < UIC_ERR_REG_HIST_LENGTH; i++) {
 		int p = (i + host->hw_reset_ufs_stats.dl_err.pos - 1) % UIC_ERR_REG_HIST_LENGTH;
 
 		if (host->hw_reset_ufs_stats.dl_err.reg[p] == 0)
 			continue;
-		curr_len += snprintf(buf + curr_len, PAGE_SIZE, "%02d:0x%x at %lld us\n", i,
+		curr_len += snprintf(buf + curr_len, PAGE_SIZE - curr_len, "%02d:0x%x at %lld us\n", i,
 			host->hw_reset_ufs_stats.dl_err.reg[p],
 			ktime_to_us(host->hw_reset_ufs_stats.dl_err.tstamp[p]));
 	}
 
-	curr_len += snprintf(buf + curr_len, PAGE_SIZE, " nl_stats :\n");
+	curr_len += snprintf(buf + curr_len, PAGE_SIZE - curr_len, " nl_stats :\n");
 	for (i = 0; i < UIC_ERR_REG_HIST_LENGTH; i++) {
 		int p = (i + host->hw_reset_ufs_stats.nl_err.pos - 1) % UIC_ERR_REG_HIST_LENGTH;
 
 		if (host->hw_reset_ufs_stats.nl_err.reg[p] == 0)
 			continue;
-		curr_len += snprintf(buf + curr_len, PAGE_SIZE, "%02d:0x%x at %lld us\n", i,
+		curr_len += snprintf(buf + curr_len, PAGE_SIZE - curr_len, "%02d:0x%x at %lld us\n", i,
 			host->hw_reset_ufs_stats.nl_err.reg[p],
 			ktime_to_us(host->hw_reset_ufs_stats.nl_err.tstamp[p]));
 	}
 
-	curr_len += snprintf(buf + curr_len, PAGE_SIZE, " tl_stats :\n");
+	curr_len += snprintf(buf + curr_len, PAGE_SIZE - curr_len, " tl_stats :\n");
 	for (i = 0; i < UIC_ERR_REG_HIST_LENGTH; i++) {
 		int p = (i + host->hw_reset_ufs_stats.tl_err.pos - 1) % UIC_ERR_REG_HIST_LENGTH;
 
 		if (host->hw_reset_ufs_stats.tl_err.reg[p] == 0)
 			continue;
-		curr_len += snprintf(buf + curr_len, PAGE_SIZE, "%02d:0x%x at %lld us\n", i,
+		curr_len += snprintf(buf + curr_len, PAGE_SIZE - curr_len, "%02d:0x%x at %lld us\n", i,
 			host->hw_reset_ufs_stats.tl_err.reg[p],
 			ktime_to_us(host->hw_reset_ufs_stats.tl_err.tstamp[p]));
 	}
 
-	curr_len += snprintf(buf + curr_len, PAGE_SIZE, " dme_stats :\n");
+	curr_len += snprintf(buf + curr_len, PAGE_SIZE - curr_len, " dme_stats :\n");
 	for (i = 0; i < UIC_ERR_REG_HIST_LENGTH; i++) {
 		int p = (i + host->hw_reset_ufs_stats.dme_err.pos - 1) % UIC_ERR_REG_HIST_LENGTH;
 
 		if (host->hw_reset_ufs_stats.dme_err.reg[p] == 0)
 			continue;
-		curr_len += snprintf(buf + curr_len, PAGE_SIZE, "%02d:0x%x at %lld us\n", i,
+		curr_len += snprintf(buf + curr_len, PAGE_SIZE - curr_len, "%02d:0x%x at %lld us\n", i,
 			host->hw_reset_ufs_stats.dme_err.reg[p],
 			ktime_to_us(host->hw_reset_ufs_stats.dme_err.tstamp[p]));
 	}
