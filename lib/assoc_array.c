@@ -1129,7 +1129,7 @@ struct assoc_array_edit *assoc_array_delete(struct assoc_array *array,
 	}
 
 found_leaf:
-	BUG_ON(array->nr_leaves_on_tree <= 0);
+	BUG_ON(array->nr_leaves_on_tree == 0);
 
 	/* In the simplest form of deletion we just clear the slot and release
 	 * the leaf after a suitable interval.
