@@ -54,5 +54,5 @@ struct cpufreq_governor *cpufreq_default_governor(void)
 }
 #endif
 
-core_initcall(cpufreq_gov_acacia_perf_register);
+fs_initcall(cpufreq_gov_acacia_perf_register);
 module_exit(cpufreq_gov_acacia_perf_unregister);
