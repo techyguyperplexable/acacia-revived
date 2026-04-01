@@ -2,8 +2,7 @@
 /*
  * CPUFreq governor: acacia-battery
  *
- * Locks CPU frequency to the policy minimum with cached frequency
- * tracking to avoid redundant driver calls.
+ * Locks CPU frequency to the policy minimum.
  *
  * Copyright (C) 2024 techyguyperplexable
  */
@@ -13,38 +12,9 @@
 #include <linux/cpufreq.h>
 #include <linux/init.h>
 #include <linux/module.h>
-#include <linux/slab.h>
-
-struct acacia_battery_data {
-	unsigned int cached_min;
-};
-
-static int cpufreq_gov_acacia_battery_init(struct cpufreq_policy *policy)
-{
-	struct acacia_battery_data *data;
-
-	data = kzalloc(sizeof(*data), GFP_KERNEL);
-	if (!data)
-		return -ENOMEM;
-
-	data->cached_min = policy->min;
-	policy->governor_data = data;
-
-	return 0;
-}
-
-static void cpufreq_gov_acacia_battery_exit(struct cpufreq_policy *policy)
-{
-	kfree(policy->governor_data);
-	policy->governor_data = NULL;
-}
 
 static int cpufreq_gov_acacia_battery_start(struct cpufreq_policy *policy)
 {
-	struct acacia_battery_data *data = policy->governor_data;
-
-	data->cached_min = policy->min;
-
 	pr_debug("setting policy%u to %u kHz\n", policy->cpu, policy->min);
 	__cpufreq_driver_target(policy, policy->min, CPUFREQ_RELATION_L);
 	return 0;
@@ -52,22 +22,12 @@ static int cpufreq_gov_acacia_battery_start(struct cpufreq_policy *policy)
 
 static void cpufreq_gov_acacia_battery_limits(struct cpufreq_policy *policy)
 {
-	struct acacia_battery_data *data = policy->governor_data;
-	unsigned int target = policy->min;
-
-	if (likely(target == data->cached_min && policy->cur == target))
-		return;
-
-	data->cached_min = target;
-
-	pr_debug("updating policy%u to %u kHz\n", policy->cpu, target);
-	__cpufreq_driver_target(policy, target, CPUFREQ_RELATION_L);
+	pr_debug("updating policy%u to %u kHz\n", policy->cpu, policy->min);
+	__cpufreq_driver_target(policy, policy->min, CPUFREQ_RELATION_L);
 }
 
 static struct cpufreq_governor cpufreq_gov_acacia_battery = {
 	.name		= "acacia-battery",
-	.init		= cpufreq_gov_acacia_battery_init,
-	.exit		= cpufreq_gov_acacia_battery_exit,
 	.start		= cpufreq_gov_acacia_battery_start,
 	.limits		= cpufreq_gov_acacia_battery_limits,
 	.owner		= THIS_MODULE,
