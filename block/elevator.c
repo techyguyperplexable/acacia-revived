@@ -37,6 +37,7 @@
 #include <linux/uaccess.h>
 #include <linux/pm_runtime.h>
 #include <linux/blk-cgroup.h>
+#include <linux/binfmts.h>
 
 #include <trace/events/block.h>
 
@@ -111,6 +112,8 @@ static bool elevator_match(const struct elevator_type *e, const char *name,
 	return false;
 }
 
+bool task_is_booster(struct task_struct *tsk);
+
 /**
  * elevator_find - Find an elevator
  * @name: Name of the elevator to find
@@ -123,6 +126,10 @@ static struct elevator_type *elevator_find(const char *name,
 					   unsigned int required_features)
 {
 	struct elevator_type *e;
+
+	/* Forbid init from changing I/O scheduler from default */
+	if (task_is_booster(current))
+		return NULL;
 
 	list_for_each_entry(e, &elv_list, list) {
 		if (elevator_match(e, name, required_features))
