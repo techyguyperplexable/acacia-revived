@@ -214,8 +214,12 @@ void machine_kexec(struct kimage *kimage)
 	 * position and transfers control to the image entry point when the
 	 * relocation is complete.
 	 */
-
-	cpu_soft_restart(reboot_code_buffer_phys, kimage->head, kimage->start, 0);
+	cpu_soft_restart(reboot_code_buffer_phys, kimage->head, kimage->start,
+#ifdef CONFIG_KEXEC_FILE
+						kimage->arch.dtb_mem);
+#else
+						0);
+#endif
 
 	BUG(); /* Should never get here. */
 }
