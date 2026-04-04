@@ -638,16 +638,12 @@ int elevator_init_mq(struct request_queue *q)
 
 	if (unlikely(q->elevator))
 		goto out;
-	if (IS_ENABLED(CONFIG_MQ_IOSCHED_DEADLINE)) {
-		e = elevator_get(q, "mq-deadline", false);
-		if (!e)
-			goto out;
-	} else if (IS_ENABLED(CONFIG_IOSCHED_BFQ)) {
+        if (IS_ENABLED(CONFIG_IOSCHED_BFQ)) {
 		e = elevator_get(q, "bfq", false);
 		if (!e)
 			goto out;
 	} else {
-		e = elevator_get(q, "ssg", false);
+		e = elevator_get(q, "mq-deadline", false);
 		if (!e)
 			goto out;
 	}
