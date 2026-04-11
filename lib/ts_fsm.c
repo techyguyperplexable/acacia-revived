@@ -269,9 +269,12 @@ static struct ts_config *fsm_init(const void *pattern, unsigned int len,
 	struct ts_fsm *fsm;
 	struct ts_fsm_token *tokens = (struct ts_fsm_token *) pattern;
 	unsigned int ntokens = len / sizeof(*tokens);
-	size_t priv_size = sizeof(*fsm) + len;
+	size_t priv_size;
 
-	if (len  % sizeof(struct ts_fsm_token) || ntokens < 1)
+	if (len % sizeof(struct ts_fsm_token) || ntokens < 1)
+		goto errout;
+
+	if (check_add_overflow(sizeof(*fsm), (size_t)len, &priv_size))
 		goto errout;
 
 	if (flags & TS_IGNORECASE)
