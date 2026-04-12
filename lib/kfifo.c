@@ -82,9 +82,6 @@ int __kfifo_init(struct __kfifo *fifo, void *buffer,
 {
 	size /= esize;
 
-	if (!is_power_of_2(size))
-		size = rounddown_pow_of_two(size);
-
 	fifo->in = 0;
 	fifo->out = 0;
 	fifo->esize = esize;
@@ -94,6 +91,10 @@ int __kfifo_init(struct __kfifo *fifo, void *buffer,
 		fifo->mask = 0;
 		return -EINVAL;
 	}
+
+	if (!is_power_of_2(size))
+		size = rounddown_pow_of_two(size);
+
 	fifo->mask = size - 1;
 
 	return 0;
