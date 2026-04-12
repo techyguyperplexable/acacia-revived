@@ -251,7 +251,8 @@ static void *malloc(int size)
        if (!malloc_ptr)
 		malloc_ptr = free_mem_ptr;
 
-       malloc_ptr = (malloc_ptr + 3) & ~3;     /* Align */
+       unsigned long align = sizeof(unsigned long) - 1;
+       malloc_ptr = (malloc_ptr + align) & ~align;     /* Align */
 
        p = (void *)malloc_ptr;
        malloc_ptr += size;
