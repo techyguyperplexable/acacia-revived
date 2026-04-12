@@ -197,6 +197,11 @@ unsigned long logic_pio_trans_hwaddr(struct fwnode_handle *fwnode,
 		pr_err("IO range not found or invalid\n");
 		return ~0UL;
 	}
+	if (!in_range(addr, range->hw_start, range->size)) {
+		pr_err("hw address %pa does not fit in IO range %pa\n",
+		       &addr, &range->hw_start);
+		return ~0UL;
+	}
 	if (range->size < size) {
 		pr_err("resource size %pa cannot fit in IO range size %pa\n",
 		       &size, &range->size);
