@@ -89,6 +89,12 @@ void __bitmap_shift_right(unsigned long *dst, const unsigned long *src,
 	unsigned k, lim = BITS_TO_LONGS(nbits);
 	unsigned off = shift/BITS_PER_LONG, rem = shift % BITS_PER_LONG;
 	unsigned long mask = BITMAP_LAST_WORD_MASK(nbits);
+
+	if (shift >= nbits) {
+		bitmap_zero(dst, nbits);
+		return;
+	}
+
 	for (k = 0; off + k < lim; ++k) {
 		unsigned long upper, lower;
 
@@ -134,6 +140,12 @@ void __bitmap_shift_left(unsigned long *dst, const unsigned long *src,
 	int k;
 	unsigned int lim = BITS_TO_LONGS(nbits);
 	unsigned int off = shift/BITS_PER_LONG, rem = shift % BITS_PER_LONG;
+
+	if (shift >= nbits) {
+		bitmap_zero(dst, nbits);
+		return;
+	}
+
 	for (k = lim - off - 1; k >= 0; --k) {
 		unsigned long upper, lower;
 
