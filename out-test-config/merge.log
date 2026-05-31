@@ -1,0 +1,69 @@
+Using out-test-config/.config as base
+Merging droidian/r8q-halium.config
+Value of CONFIG_POSIX_MQUEUE is redefined by fragment droidian/r8q-halium.config:
+Previous value: # CONFIG_POSIX_MQUEUE is not set
+New value: CONFIG_POSIX_MQUEUE=y
+
+Value of CONFIG_PID_NS is redefined by fragment droidian/r8q-halium.config:
+Previous value: # CONFIG_PID_NS is not set
+New value: CONFIG_PID_NS=y
+
+Value of CONFIG_CGROUP_PIDS is redefined by fragment droidian/r8q-halium.config:
+Previous value: # CONFIG_CGROUP_PIDS is not set
+New value: CONFIG_CGROUP_PIDS=y
+
+Value of CONFIG_CGROUP_NET_PRIO is redefined by fragment droidian/r8q-halium.config:
+Previous value: # CONFIG_CGROUP_NET_PRIO is not set
+New value: CONFIG_CGROUP_NET_PRIO=y
+
+Value of CONFIG_CGROUP_NET_CLASSID is redefined by fragment droidian/r8q-halium.config:
+Previous value: # CONFIG_CGROUP_NET_CLASSID is not set
+New value: CONFIG_CGROUP_NET_CLASSID=y
+
+Value of CONFIG_DEVTMPFS is redefined by fragment droidian/r8q-halium.config:
+Previous value: # CONFIG_DEVTMPFS is not set
+New value: CONFIG_DEVTMPFS=y
+
+Value of CONFIG_FHANDLE is redefined by fragment droidian/r8q-halium.config:
+Previous value: # CONFIG_FHANDLE is not set
+New value: CONFIG_FHANDLE=y
+
+Value of CONFIG_SECURITYFS is redefined by fragment droidian/r8q-halium.config:
+Previous value: # CONFIG_SECURITYFS is not set
+New value: CONFIG_SECURITYFS=y
+
+Value of CONFIG_MACVLAN is redefined by fragment droidian/r8q-halium.config:
+Previous value: # CONFIG_MACVLAN is not set
+New value: CONFIG_MACVLAN=y
+
+Value of CONFIG_BRIDGE_NETFILTER is redefined by fragment droidian/r8q-halium.config:
+Previous value: # CONFIG_BRIDGE_NETFILTER is not set
+New value: CONFIG_BRIDGE_NETFILTER=y
+
+Value of CONFIG_NETFILTER_XT_MATCH_CGROUP is redefined by fragment droidian/r8q-halium.config:
+Previous value: # CONFIG_NETFILTER_XT_MATCH_CGROUP is not set
+New value: CONFIG_NETFILTER_XT_MATCH_CGROUP=y
+
+Value of CONFIG_PACKET_DIAG is redefined by fragment droidian/r8q-halium.config:
+Previous value: # CONFIG_PACKET_DIAG is not set
+New value: CONFIG_PACKET_DIAG=y
+
+Value of CONFIG_UNIX_DIAG is redefined by fragment droidian/r8q-halium.config:
+Previous value: # CONFIG_UNIX_DIAG is not set
+New value: CONFIG_UNIX_DIAG=y
+
+Value of CONFIG_VT is redefined by fragment droidian/r8q-halium.config:
+Previous value: # CONFIG_VT is not set
+New value: CONFIG_VT=y
+
+Value of CONFIG_FB is redefined by fragment droidian/r8q-halium.config:
+Previous value: # CONFIG_FB is not set
+New value: CONFIG_FB=y
+
+Value of CONFIG_DRM_FBDEV_EMULATION is redefined by fragment droidian/r8q-halium.config:
+Previous value: # CONFIG_DRM_FBDEV_EMULATION is not set
+New value: CONFIG_DRM_FBDEV_EMULATION=y
+
+#
+# merged configuration written to /home/exynos9830/stuff/acacia/acacia-revived/out-test-config/.config (needs make)
+#

@@ -64,9 +64,9 @@ modules.builtin
 /*.spec
 
 #
-# Debian directory (make deb-pkg)
+# Debian packaging. Droidian keeps real kernel package metadata here.
 #
-/debian/
+!/debian/
 
 #
 # Snap directory (make snap-pkg)

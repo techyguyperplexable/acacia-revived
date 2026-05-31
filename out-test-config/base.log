@@ -1,0 +1,833 @@
+make[1]: Entering directory '/home/exynos9830/stuff/acacia/acacia-revived/out-test-config'
+  HOSTCC  scripts/basic/fixdep
+  GEN     ./Makefile
+  HOSTCC  scripts/kconfig/conf.o
+  YACC    scripts/kconfig/zconf.tab.c
+  LEX     scripts/kconfig/zconf.lex.c
+  HOSTCC  scripts/kconfig/zconf.tab.o
+  HOSTLD  scripts/kconfig/conf
+arch/arm64/configs/vendor/kona-not_defconfig:77:warning: override: reassigning to symbol PID_NS
+#
+# configuration written to .config
+#
+  GEN     ./Makefile
+Using .config as base
+Merging ../arch/arm64/configs/vendor/samsung/kona-sec-not.config
+Value of CONFIG_ADSP_FACTORY is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_ADSP_FACTORY is not set
+New value: CONFIG_ADSP_FACTORY=y
+
+Value of CONFIG_AFC_CHARGER_MODE is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_AFC_CHARGER_MODE is not set
+New value: CONFIG_AFC_CHARGER_MODE=y
+
+Value of CONFIG_AK09918_FACTORY is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_AK09918_FACTORY is not set
+New value: CONFIG_AK09918_FACTORY=y
+
+Value of CONFIG_BATTERY_CISD is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_BATTERY_CISD is not set
+New value: CONFIG_BATTERY_CISD=y
+
+Value of CONFIG_BATTERY_NOTIFIER is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_BATTERY_NOTIFIER is not set
+New value: CONFIG_BATTERY_NOTIFIER=y
+
+Value of CONFIG_BATTERY_SAMSUNG is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_BATTERY_SAMSUNG is not set
+New value: CONFIG_BATTERY_SAMSUNG=y
+
+Value of CONFIG_BATTERY_SWELLING is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_BATTERY_SWELLING is not set
+New value: CONFIG_BATTERY_SWELLING=y
+
+Value of CONFIG_BLK_IO_VOLUME is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_BLK_IO_VOLUME is not set
+New value: CONFIG_BLK_IO_VOLUME=y
+
+Value of CONFIG_BUILD_ARM64_APPENDED_DTB_IMAGE is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_BUILD_ARM64_APPENDED_DTB_IMAGE is not set
+New value: CONFIG_BUILD_ARM64_APPENDED_DTB_IMAGE=y
+
+Value of CONFIG_CCIC_ALTERNATE_MODE is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_CCIC_ALTERNATE_MODE is not set
+New value: CONFIG_CCIC_ALTERNATE_MODE=y
+
+Value of CONFIG_CCIC_MAX77705 is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_CCIC_MAX77705 is not set
+New value: CONFIG_CCIC_MAX77705=y
+
+Value of CONFIG_CCIC_NOTIFIER is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_CCIC_NOTIFIER is not set
+New value: CONFIG_CCIC_NOTIFIER=y
+
+Value of CONFIG_CONNECTOR is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_CONNECTOR is not set
+New value: CONFIG_CONNECTOR=y
+
+Value of CONFIG_CRYPTO_KBKDF_CTR_HMAC_SHA512 is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_CRYPTO_KBKDF_CTR_HMAC_SHA512 is not set
+New value: CONFIG_CRYPTO_KBKDF_CTR_HMAC_SHA512=y
+
+Value of CONFIG_DEV_RIL_BRIDGE is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_DEV_RIL_BRIDGE is not set
+New value: CONFIG_DEV_RIL_BRIDGE=y
+
+Value of CONFIG_DIRECT_CHARGING is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_DIRECT_CHARGING is not set
+New value: CONFIG_DIRECT_CHARGING=y
+
+Value of CONFIG_DISPLAY_SAMSUNG is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_DISPLAY_SAMSUNG is not set
+New value: CONFIG_DISPLAY_SAMSUNG=y
+
+Value of CONFIG_DM_ANDROID_VERITY_AT_MOST_ONCE_DEFAULT_ENABLED is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_DM_ANDROID_VERITY_AT_MOST_ONCE_DEFAULT_ENABLED is not set
+New value: CONFIG_DM_ANDROID_VERITY_AT_MOST_ONCE_DEFAULT_ENABLED=y
+
+Value of CONFIG_DRV_SAMSUNG is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_DRV_SAMSUNG is not set
+New value: CONFIG_DRV_SAMSUNG=y
+
+Value of CONFIG_DSP_SLEEP_RECOVERY is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_DSP_SLEEP_RECOVERY is not set
+New value: CONFIG_DSP_SLEEP_RECOVERY=y
+
+Value of CONFIG_ENABLE_100MA_CHARGING_BEFORE_USB_CONFIGURED is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_ENABLE_100MA_CHARGING_BEFORE_USB_CONFIGURED is not set
+New value: CONFIG_ENABLE_100MA_CHARGING_BEFORE_USB_CONFIGURED=y
+
+Value of CONFIG_ENABLE_FULL_BY_SOC is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_ENABLE_FULL_BY_SOC is not set
+New value: CONFIG_ENABLE_FULL_BY_SOC=y
+
+Value of CONFIG_ENABLE_USB_SUSPEND_STATE is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_ENABLE_USB_SUSPEND_STATE is not set
+New value: CONFIG_ENABLE_USB_SUSPEND_STATE=y
+
+Value of CONFIG_EROFS_FS is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_EROFS_FS is not set
+New value: CONFIG_EROFS_FS=y
+
+Value of CONFIG_FAIR_GROUP_SCHED is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: CONFIG_FAIR_GROUP_SCHED=y
+New value: # CONFIG_FAIR_GROUP_SCHED is not set
+
+Value of CONFIG_FINGERPRINT_SECURE is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_FINGERPRINT_SECURE is not set
+New value: CONFIG_FINGERPRINT_SECURE=y
+
+Value of CONFIG_FOTA_LIMIT is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_FOTA_LIMIT is not set
+New value: CONFIG_FOTA_LIMIT=y
+
+Value of CONFIG_FS_HPB is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_FS_HPB is not set
+New value: CONFIG_FS_HPB=y
+
+Value of CONFIG_HID_LOGITECH is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_HID_LOGITECH is not set
+New value: CONFIG_HID_LOGITECH=y
+
+Value of CONFIG_HID_PICOLCD is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_HID_PICOLCD is not set
+New value: CONFIG_HID_PICOLCD=y
+
+Value of CONFIG_HID_PRODIKEYS is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_HID_PRODIKEYS is not set
+New value: CONFIG_HID_PRODIKEYS=y
+
+Value of CONFIG_HID_ROCCAT is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_HID_ROCCAT is not set
+New value: CONFIG_HID_ROCCAT=y
+
+Value of CONFIG_HID_SAMSUNG is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_HID_SAMSUNG is not set
+New value: CONFIG_HID_SAMSUNG=y
+
+Value of CONFIG_HID_UCLOGIC is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_HID_UCLOGIC is not set
+New value: CONFIG_HID_UCLOGIC=y
+
+Value of CONFIG_I2C_GPIO is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_I2C_GPIO is not set
+New value: CONFIG_I2C_GPIO=y
+
+Value of CONFIG_INPUT_TOUCHSCREEN_TCLMV2 is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_INPUT_TOUCHSCREEN_TCLMV2 is not set
+New value: CONFIG_INPUT_TOUCHSCREEN_TCLMV2=y
+
+Value of CONFIG_KNOX_NCM is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: CONFIG_KNOX_NCM=y
+New value: # CONFIG_KNOX_NCM is not set
+
+Value of CONFIG_LIMIT_CHARGING_DURING_CALL is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_LIMIT_CHARGING_DURING_CALL is not set
+New value: CONFIG_LIMIT_CHARGING_DURING_CALL=y
+
+Value of CONFIG_LSM6DSO_FACTORY is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_LSM6DSO_FACTORY is not set
+New value: CONFIG_LSM6DSO_FACTORY=y
+
+Value of CONFIG_MEDIA_DIGITAL_TV_SUPPORT is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: CONFIG_MEDIA_DIGITAL_TV_SUPPORT=y
+New value: # CONFIG_MEDIA_DIGITAL_TV_SUPPORT is not set
+
+Value of CONFIG_MFD_CS35L41 is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_MFD_CS35L41 is not set
+New value: CONFIG_MFD_CS35L41=y
+
+Value of CONFIG_MFD_CS35L41_I2C is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_MFD_CS35L41_I2C is not set
+New value: CONFIG_MFD_CS35L41_I2C=y
+
+Value of CONFIG_MFD_MAX77705 is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_MFD_MAX77705 is not set
+New value: CONFIG_MFD_MAX77705=y
+
+Value of CONFIG_MFD_S2MPB02 is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_MFD_S2MPB02 is not set
+New value: CONFIG_MFD_S2MPB02=y
+
+Value of CONFIG_MUIC_SUPPORT_RUSTPROOF is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_MUIC_SUPPORT_RUSTPROOF is not set
+New value: CONFIG_MUIC_SUPPORT_RUSTPROOF=y
+
+Value of CONFIG_NET_CLS_BASIC is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_NET_CLS_BASIC is not set
+New value: CONFIG_NET_CLS_BASIC=y
+
+Value of CONFIG_NF_CONNTRACK_PROCFS is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_NF_CONNTRACK_PROCFS is not set
+New value: CONFIG_NF_CONNTRACK_PROCFS=y
+
+Value of CONFIG_PREVENT_USB_CONN_OVERHEAT is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_PREVENT_USB_CONN_OVERHEAT is not set
+New value: CONFIG_PREVENT_USB_CONN_OVERHEAT=y
+
+Value of CONFIG_PROC_AVC is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_PROC_AVC is not set
+New value: CONFIG_PROC_AVC=y
+
+Value of CONFIG_PROC_TRIGGER_SQLITE_BUG is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: CONFIG_PROC_TRIGGER_SQLITE_BUG=y
+New value: # CONFIG_PROC_TRIGGER_SQLITE_BUG is not set
+
+Value of CONFIG_PSTORE is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_PSTORE is not set
+New value: CONFIG_PSTORE=y
+
+Value of CONFIG_RBIN is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_RBIN is not set
+New value: CONFIG_RBIN=y
+
+Value of CONFIG_RD_BZIP2 is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: CONFIG_RD_BZIP2=y
+New value: # CONFIG_RD_BZIP2 is not set
+
+Value of CONFIG_RD_LZMA is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: CONFIG_RD_LZMA=y
+New value: # CONFIG_RD_LZMA is not set
+
+Value of CONFIG_REGULATOR_S2DOS05 is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_REGULATOR_S2DOS05 is not set
+New value: CONFIG_REGULATOR_S2DOS05=y
+
+Value of CONFIG_REGULATOR_S2MPB03 is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_REGULATOR_S2MPB03 is not set
+New value: CONFIG_REGULATOR_S2MPB03=y
+
+Value of CONFIG_RTC_AUTO_PWRON is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_RTC_AUTO_PWRON is not set
+New value: CONFIG_RTC_AUTO_PWRON=y
+
+Value of CONFIG_SAMSUNG_PRODUCT_SHIP is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_SAMSUNG_PRODUCT_SHIP is not set
+New value: CONFIG_SAMSUNG_PRODUCT_SHIP=y
+
+Value of CONFIG_SDCARD_FS is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: CONFIG_SDCARD_FS=y
+New value: # CONFIG_SDCARD_FS is not set
+
+Value of CONFIG_SEC_CONNECTOR_DETECTOR is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_SEC_CONNECTOR_DETECTOR is not set
+New value: CONFIG_SEC_CONNECTOR_DETECTOR=y
+
+Value of CONFIG_SEC_DEBUG is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_SEC_DEBUG is not set
+New value: CONFIG_SEC_DEBUG=y
+
+Value of CONFIG_SEC_DISPLAYPORT is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_SEC_DISPLAYPORT is not set
+New value: CONFIG_SEC_DISPLAYPORT=y
+
+Value of CONFIG_SEC_DISPLAYPORT_BIGDATA is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_SEC_DISPLAYPORT_BIGDATA is not set
+New value: CONFIG_SEC_DISPLAYPORT_BIGDATA=y
+
+Value of CONFIG_SEC_EVENT_LOG is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_SEC_EVENT_LOG is not set
+New value: CONFIG_SEC_EVENT_LOG=y
+
+Value of CONFIG_SEC_EXT_THERMAL_MONITOR is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_SEC_EXT_THERMAL_MONITOR is not set
+New value: CONFIG_SEC_EXT_THERMAL_MONITOR=y
+
+Value of CONFIG_SEC_NOEYEINFO is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_SEC_NOEYEINFO is not set
+New value: CONFIG_SEC_NOEYEINFO=y
+
+Value of CONFIG_SEC_PARAM is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_SEC_PARAM is not set
+New value: CONFIG_SEC_PARAM=y
+
+Value of CONFIG_SEC_PCIE is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_SEC_PCIE is not set
+New value: CONFIG_SEC_PCIE=y
+
+Value of CONFIG_SEC_PCIE_AER is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_SEC_PCIE_AER is not set
+New value: CONFIG_SEC_PCIE_AER=y
+
+Value of CONFIG_SEC_STI is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_SEC_STI is not set
+New value: CONFIG_SEC_STI=y
+
+Value of CONFIG_SEC_SYSUP is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_SEC_SYSUP is not set
+New value: CONFIG_SEC_SYSUP=y
+
+Value of CONFIG_SENSORS is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_SENSORS is not set
+New value: CONFIG_SENSORS=y
+
+Value of CONFIG_SENSORS_FINGERPRINT is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_SENSORS_FINGERPRINT is not set
+New value: CONFIG_SENSORS_FINGERPRINT=y
+
+Value of CONFIG_SENSORS_FINGERPRINT_QCOM is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_SENSORS_FINGERPRINT_QCOM is not set
+New value: CONFIG_SENSORS_FINGERPRINT_QCOM=y
+
+Value of CONFIG_SENSORS_HALL is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_SENSORS_HALL is not set
+New value: CONFIG_SENSORS_HALL=y
+
+Value of CONFIG_SLPI_MOTOR is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_SLPI_MOTOR is not set
+New value: CONFIG_SLPI_MOTOR=y
+
+Value of CONFIG_SND_SOC_SAMSUNG_AUDIO is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_SND_SOC_SAMSUNG_AUDIO is not set
+New value: CONFIG_SND_SOC_SAMSUNG_AUDIO=y
+
+Value of CONFIG_SPU_VERIFY is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_SPU_VERIFY is not set
+New value: CONFIG_SPU_VERIFY=y
+
+Value of CONFIG_STEP_CHARGING is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_STEP_CHARGING is not set
+New value: CONFIG_STEP_CHARGING=y
+
+Value of CONFIG_SUPPORT_SSC_SPU is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_SUPPORT_SSC_SPU is not set
+New value: CONFIG_SUPPORT_SSC_SPU=y
+
+Value of CONFIG_SWITCH is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_SWITCH is not set
+New value: CONFIG_SWITCH=y
+
+Value of CONFIG_SYSFS_SYSCALL is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: CONFIG_SYSFS_SYSCALL=y
+New value: # CONFIG_SYSFS_SYSCALL is not set
+
+Value of CONFIG_TECHPACK_CAMERA_SAMSUNG is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_TECHPACK_CAMERA_SAMSUNG is not set
+New value: CONFIG_TECHPACK_CAMERA_SAMSUNG=y
+
+Value of CONFIG_TOUCHSCREEN_DUMP_MODE is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_TOUCHSCREEN_DUMP_MODE is not set
+New value: CONFIG_TOUCHSCREEN_DUMP_MODE=y
+
+Value of CONFIG_TOUCHSCREEN_SYNAPTICS_DSX is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: CONFIG_TOUCHSCREEN_SYNAPTICS_DSX=y
+New value: # CONFIG_TOUCHSCREEN_SYNAPTICS_DSX is not set
+
+Value of CONFIG_USB_CHARGING_EVENT is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_USB_CHARGING_EVENT is not set
+New value: CONFIG_USB_CHARGING_EVENT=y
+
+Value of CONFIG_USB_CONFIGFS_ACM is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_USB_CONFIGFS_ACM is not set
+New value: CONFIG_USB_CONFIGFS_ACM=y
+
+Value of CONFIG_USB_CONFIGFS_CONN_GADGET is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_USB_CONFIGFS_CONN_GADGET is not set
+New value: CONFIG_USB_CONFIGFS_CONN_GADGET=y
+
+Value of CONFIG_USB_CONFIGFS_F_SS_MON_GADGET is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_USB_CONFIGFS_F_SS_MON_GADGET is not set
+New value: CONFIG_USB_CONFIGFS_F_SS_MON_GADGET=y
+
+Value of CONFIG_USB_CONFIGFS_RNDIS is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_USB_CONFIGFS_RNDIS is not set
+New value: CONFIG_USB_CONFIGFS_RNDIS=y
+
+Value of CONFIG_USB_G_ANDROID is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_USB_G_ANDROID is not set
+New value: CONFIG_USB_G_ANDROID=y
+
+Value of CONFIG_USB_HMT_SAMSUNG_INPUT is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_USB_HMT_SAMSUNG_INPUT is not set
+New value: CONFIG_USB_HMT_SAMSUNG_INPUT=y
+
+Value of CONFIG_USB_HOST_CERTIFICATION is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_USB_HOST_CERTIFICATION is not set
+New value: CONFIG_USB_HOST_CERTIFICATION=y
+
+Value of CONFIG_USB_HOST_SAMSUNG_FEATURE is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_USB_HOST_SAMSUNG_FEATURE is not set
+New value: CONFIG_USB_HOST_SAMSUNG_FEATURE=y
+
+Value of CONFIG_USB_INTERFACE_LPM_LIST is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_USB_INTERFACE_LPM_LIST is not set
+New value: CONFIG_USB_INTERFACE_LPM_LIST=y
+
+Value of CONFIG_USB_NOTIFY_LAYER is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_USB_NOTIFY_LAYER is not set
+New value: CONFIG_USB_NOTIFY_LAYER=y
+
+Value of CONFIG_USB_SERIAL_PL2303 is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_USB_SERIAL_PL2303 is not set
+New value: CONFIG_USB_SERIAL_PL2303=y
+
+Value of CONFIG_USB_STORAGE_DETECT is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_USB_STORAGE_DETECT is not set
+New value: CONFIG_USB_STORAGE_DETECT=y
+
+Value of CONFIG_USB_TYPEC_MANAGER_NOTIFIER is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_USB_TYPEC_MANAGER_NOTIFIER is not set
+New value: CONFIG_USB_TYPEC_MANAGER_NOTIFIER=y
+
+Value of CONFIG_USE_MUIC is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_USE_MUIC is not set
+New value: CONFIG_USE_MUIC=y
+
+Value of CONFIG_VGA_ARB is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: CONFIG_VGA_ARB=y
+New value: # CONFIG_VGA_ARB is not set
+
+Value of CONFIG_VIB_NOTIFIER is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_VIB_NOTIFIER is not set
+New value: CONFIG_VIB_NOTIFIER=y
+
+Value of CONFIG_HPB_RELEASE_CHECK is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_HPB_RELEASE_CHECK is not set
+New value: CONFIG_HPB_RELEASE_CHECK=y
+
+Value of CONFIG_SPECTRA_CAMERA is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: # CONFIG_SPECTRA_CAMERA is not set
+New value: CONFIG_SPECTRA_CAMERA=y
+
+Value of CONFIG_UFSHPB is redefined by fragment ../arch/arm64/configs/vendor/samsung/kona-sec-not.config:
+Previous value: CONFIG_UFSHPB=y
+New value: # CONFIG_UFSHPB is not set
+
+#
+# merged configuration written to .config (needs make)
+#
+  GEN     ./Makefile
+scripts/kconfig/conf  --oldconfig Kconfig
+.config:6551:warning: unexpected data: s# CONFIG_ADS7052_TDK_THERMISTOR is not set
+*
+* Restart config...
+*
+*
+* USB support
+*
+USB support (USB_SUPPORT) [Y/n/?] y
+  Support for Host-side USB (USB) [Y/?] y
+  PCI based USB host interface (USB_PCI) [Y/n/?] y
+  USB announce new devices (USB_ANNOUNCE_NEW_DEVICES) [Y/n/?] y
+  *
+  * Miscellaneous USB options
+  *
+  Enable USB persist by default (USB_DEFAULT_PERSIST) [Y/n/?] y
+  Dynamic USB minor allocation (USB_DYNAMIC_MINORS) [N/y/?] n
+  OTG support (USB_OTG) [N/y/?] n
+  Rely on OTG and EH Targeted Peripherals List (USB_OTG_WHITELIST) [N/y/?] n
+  Disable external hubs (USB_OTG_BLACKLIST_HUB) [N/y/?] n
+  USB port LED trigger (USB_LEDS_TRIGGER_USBPORT) [N/y/?] n
+  USB Embedded host certification (USB_HOST_CERTIFICATION) [Y/n/?] y
+  USB Monitor (USB_MON) [N/y/?] n
+  Support WUSB Cable Based Association (CBA) (USB_WUSB_CBAF) [N/y/?] n
+  *
+  * USB Host Controller Drivers
+  *
+  Cypress C67x00 HCD support (USB_C67X00_HCD) [N/y/?] n
+  xHCI HCD (USB 3.0) support (USB_XHCI_HCD) [Y/n/?] y
+    xHCI support for debug capability (USB_XHCI_DBGCAP) [N/y/?] n
+    Generic xHCI driver for a platform device (USB_XHCI_PLATFORM) [Y/?] y
+  EHCI HCD (USB 2.0) support (USB_EHCI_HCD) [N/y/?] n
+  OXU210HP HCD support (USB_OXU210HP_HCD) [N/y/?] n
+  ISP116X HCD support (USB_ISP116X_HCD) [N/y/?] n
+  FOTG210 HCD support (USB_FOTG210_HCD) [N/y/?] n
+  MAX3421 HCD (USB-over-SPI) support (USB_MAX3421_HCD) [N/y/?] n
+  OHCI HCD (USB 1.1) support (USB_OHCI_HCD) [N/y/?] n
+  UHCI HCD (most Intel and VIA) support (USB_UHCI_HCD) [N/y/?] n
+  SL811HS HCD support (USB_SL811_HCD) [N/y/?] n
+  R8A66597 HCD support (USB_R8A66597_HCD) [N/y/?] n
+  Support for Qualcomm Technologies, Inc. QSD/MSM on-chip EHCI USB controller (USB_EHCI_MSM) [N/y/?] n
+  HCD test mode support (USB_HCD_TEST_MODE) [N/y/?] n
+  *
+  * USB Device Class drivers
+  *
+  USB Modem (CDC ACM) support (USB_ACM) [N/y/?] n
+  USB Printer support (USB_PRINTER) [N/y/?] n
+  USB Wireless Device Management support (USB_WDM) [N/y/?] n
+  USB Test and Measurement Class support (USB_TMC) [N/y/?] n
+  *
+  * NOTE: USB_STORAGE depends on SCSI but BLK_DEV_SD may
+  *
+  *
+  * also be needed; see USB_STORAGE Help for more info
+  *
+  USB Mass Storage support (USB_STORAGE) [Y/n/?] y
+    USB Mass Storage verbose debug (USB_STORAGE_DEBUG) [N/y/?] n
+    Realtek Card Reader support (USB_STORAGE_REALTEK) [N/y/?] n
+    Datafab Compact Flash Reader support (USB_STORAGE_DATAFAB) [N/y/?] n
+    Freecom USB/ATAPI Bridge support (USB_STORAGE_FREECOM) [N/y/?] n
+    ISD-200 USB/ATA Bridge support (USB_STORAGE_ISD200) [N/y/?] n
+    USBAT/USBAT02-based storage support (USB_STORAGE_USBAT) [N/y/?] n
+    SanDisk SDDR-09 (and other SmartMedia, including DPCM) support (USB_STORAGE_SDDR09) [N/y/?] n
+    SanDisk SDDR-55 SmartMedia support (USB_STORAGE_SDDR55) [N/y/?] n
+    Lexar Jumpshot Compact Flash Reader (USB_STORAGE_JUMPSHOT) [N/y/?] n
+    Olympus MAUSB-10/Fuji DPC-R1 support (USB_STORAGE_ALAUDA) [N/y/?] n
+    Support OneTouch Button on Maxtor Hard Drives (USB_STORAGE_ONETOUCH) [N/y/?] n
+    Support for Rio Karma music player (USB_STORAGE_KARMA) [N/y/?] n
+    SAT emulation on Cypress USB/ATA Bridge with ATACB (USB_STORAGE_CYPRESS_ATACB) [N/y/?] n
+    USB ENE card reader support (USB_STORAGE_ENE_UB6250) [N/y/?] n
+    USB Attached SCSI (USB_UAS) [N/y/?] n
+  *
+  * USB Imaging devices
+  *
+  USB Mustek MDC800 Digital Camera support (USB_MDC800) [N/y/?] n
+  Microtek X6USB scanner support (USB_MICROTEK) [N/y/?] n
+  USB/IP support (USBIP_CORE) [N/y/?] n
+  Inventra Highspeed Dual Role Controller (USB_MUSB_HDRC) [N/y/?] n
+  DesignWare USB3 DRD Core Support (USB_DWC3) [Y/n/?] y
+    USB3.0 Link port power optimization (USB_PORT_POWER_OPTIMIZATION) [N/y/?] n
+    DWC3 Mode Selection
+      1. Host only mode (USB_DWC3_HOST)
+      2. Gadget only mode (USB_DWC3_GADGET)
+    > 3. Dual Role mode (USB_DWC3_DUAL_ROLE)
+    choice[1-3?]: 3
+    *
+    * Platform Glue Driver Support
+    *
+    Synopsys PCIe-based HAPS Platforms (USB_DWC3_HAPS) [Y/n/?] y
+    Generic OF Simple Glue Layer (USB_DWC3_OF_SIMPLE) [Y/n/?] y
+    Enable USB suspend current state (ENABLE_USB_SUSPEND_STATE) [Y/n/?] y
+    Qualcomm Platform (USB_DWC3_QCOM) [Y/n/?] y
+    QTI MSM Platforms (USB_DWC3_MSM) [Y/n/?] y
+    Set usb charging current  (USB_CHARGING_EVENT) [Y/n/?] y
+  DesignWare USB2 DRD Core Support (USB_DWC2) [N/y/?] n
+  ChipIdea Highspeed Dual Role Controller (USB_CHIPIDEA) [N/y/?] n
+  NXP ISP 1760/1761 support (USB_ISP1760) [N/y/?] n
+  *
+  * USB port drivers
+  *
+  *
+  * USB Miscellaneous drivers
+  *
+  EMI 6|2m USB Audio interface support (USB_EMI62) [N/y/?] n
+  EMI 2|6 USB Audio interface support (USB_EMI26) [N/y/?] n
+  ADU devices from Ontrak Control Systems (USB_ADUTUX) [N/y/?] n
+  USB 7-Segment LED Display (USB_SEVSEG) [N/y/?] n
+  USB Lego Infrared Tower support (USB_LEGOTOWER) [N/y/?] n
+  USB LCD driver support (USB_LCD) [N/y/?] n
+  Cypress CY7C63xxx USB driver support (USB_CYPRESS_CY7C63) [N/y/?] n
+  Cypress USB thermometer driver support (USB_CYTHERM) [N/y/?] n
+  Siemens ID USB Mouse Fingerprint sensor support (USB_IDMOUSE) [N/y/?] n
+  Elan PCMCIA CardBus Adapter USB Client (USB_FTDI_ELAN) [N/y/?] n
+  Apple Cinema Display support (USB_APPLEDISPLAY) [N/y/?] n
+  USB Vbus detect genoa driver (USB_VBUS_EXTCON_GENOA) [N/y/?] n
+  USB LD driver (USB_LD) [N/y/?] n
+  PlayStation 2 Trance Vibrator driver support (USB_TRANCEVIBRATOR) [N/y/?] n
+  IO Warrior driver support (USB_IOWARRIOR) [N/y/?] n
+  USB testing driver (USB_TEST) [N/y/?] n
+  USB EHSET Test Fixture driver (USB_EHSET_TEST_FIXTURE) [N/y/?] n
+  iSight firmware loading support (USB_ISIGHTFW) [N/y/?] n
+  USB YUREX driver support (USB_YUREX) [N/y/?] n
+  Functions for loading firmware on EZUSB chips (USB_EZUSB_FX2) [N/y/?] n
+  USB251XB Hub Controller Configuration Driver (USB_HUB_USB251XB) [N/y/?] n
+  USB3503 HSIC to USB20 Driver (USB_HSIC_USB3503) [N/y/?] n
+  USB4604 HSIC to USB20 Driver (USB_HSIC_USB4604) [N/y/?] n
+  USB Link Layer Test driver (USB_LINK_LAYER_TEST) [N/y/?] n
+  ChaosKey random number generator driver support (USB_CHAOSKEY) [N/y/?] n
+  USB 3.1 Gen1/Gen2 10Gbps re-driver driver for NB7VPQ904M (USB_REDRIVER_NB7VPQ904M) [N/y/?] n
+  USB QTI kick start bridge (USB_QTI_KS_BRIDGE) [N/y/?] n
+  USB QTI diagnostic bridge driver (USB_QCOM_DIAG_BRIDGE) [N/y/?] n
+  USB Role Switch Support (USB_ROLE_SWITCH) [N/y/?] n
+  *
+  * USB Notify features
+  *
+  USB Host notify Driver (USB_HOST_NOTIFY) [Y/n/?] y
+  USB notify layer (USB_NOTIFY_LAYER) [Y/n/?] y
+    USB notifier (USB_NOTIFIER) [Y/n/?] y
+  USB detailed log for debugging (USB_DEBUG_DETAILED_LOG) [N/y/?] n
+  USB storage detect function (USB_STORAGE_DETECT) [Y/n/?] y
+  USB HMT inputs for samsung hmt devices (USB_HMT_SAMSUNG_INPUT) [Y/n/?] y
+  USB external notify (USB_EXTERNAL_NOTIFY) [Y/n/?] y
+  USB proc log (USB_NOTIFY_PROC_LOG) [Y/n/?] y
+  USB Host Samsung Feature (USB_HOST_SAMSUNG_FEATURE) [Y/n/?] y
+  USB H/W Parameter (USB_HW_PARAM) [Y/n/?] y
+  USB interface class lpm Feature (USB_INTERFACE_LPM_LIST) [Y/n/?] y
+  USB CCIC Notifier using QC PMIC (USB_CCIC_NOTIFIER_USING_QC) [N/y/?] n
+  USB audio enhanced detect time (USB_AUDIO_ENHANCED_DETECT_TIME) [Y/n/?] y
+  USB Embedded host certification (USB_HOST_CERTI) [N/y/?] n
+  disable usb restriction during lockscreen (DISABLE_LOCKSCREEN_USB_RESTRICTION) [N/y/?] (NEW) 
+  use usb communications capable in source capability (USE_USB_COMMUNICATIONS_CAPABLE) [Y/n/?] (NEW) 
+  *
+  * USB TypeC Manager configs
+  *
+  USB TypeC Manager driver (USB_TYPEC_MANAGER_NOTIFIER) [Y/n/?] y
+  USB LED Triggers (USB_LED_TRIG) [N/y/?] n
+  USB ULPI PHY interface support (USB_ULPI_BUS) [N/y/?] n
+*
+* Samsung TN Ramdump Feature
+*
+Samsung TN Ramdump Feature (SEC_DEBUG) [Y/n/?] y
+  Samsung non-cached kernel printk (SEC_LOG_BUF) [Y/n/?] y
+    Select sec_log_buf type
+    > 1. Direct copying form __log_buf (SEC_LOG_BUF_NO_CONSOLE)
+      2. Console based implementaion (EXPERIMENTAL) (SEC_LOG_BUF_CONSOLE)
+    choice[1-2?]: 1
+    Enable /proc/last_kmsg support: if EMBEDDED (SEC_LOG_LAST_KMSG) [Y/n/?] y
+      store sec log when power off or reboot (SEC_LOG_STORE_LAST_KMSG) [Y/n/?] y
+      store sec log when LPM Mode boot (SEC_LOG_STORE_LPM_KMSG) [N/y/?] n
+      store power onoff history (SEC_STORE_POWER_ONOFF_HISTORY) [N/y/?] n
+  Samsung Scheduler Logging Feature (SEC_DEBUG_SCHED_LOG) [N/y/?] n
+  Kernel Message Logging for Debug Level Low (SEC_DEBUG_LOW_LOG) [N/y/?] n
+  enable force error (SEC_DEBUG_FORCE_ERROR) [N/y/?] n
+  reset reason debug feature in user version (SEC_USER_RESET_DEBUG) [Y/n/?] y
+    reset reason debug test feature in eng version (SEC_USER_RESET_DEBUG_TEST) [N/y/?] n
+  PERIPHERAL SECURE check (SEC_PERIPHERAL_SECURE_CHK) [Y/n/?] y
+  PERIPHERAL SECURE check (SEC_SSR_DEBUG_LEVEL_CHK) [Y/n/?] y
+  Dump the current stack if a kernel panic occurs (SEC_DEBUG_DUMP_TASK_STACK) [Y/n/?] y
+  MDM filename and line number in UPLOAD mode (DEPRECATED) (SEC_DEBUG_MDM_FILE_INFO) [N/y/?] (NEW) 
+  Enable double free detection (DEPRECATED) (SEC_DEBUG_DOUBLE_FREE) [N/y/?] n
+  Samsung File Leak Debugging Feature (DEPRECATED) (SEC_FILE_LEAK_DEBUG) [N/y/?] n
+  Check the wrong usage of SIMD registers (KERNEL_MODE_NEON_DEBUG) [N/y/?] n
+  Keep freeing stack traces on the slub object (SEC_SLUB_DEBUG) [N/y/?] n
+  Separate CP debug level from AP's (SEC_CP_SEPARATE_DEBUG) [N/y/?] n
+  store module information (SEC_DEBUG_MODULE_INFO) [N/y/?] n
+#
+# configuration written to .config
+#
+yes: standard output: Broken pipe
+  GEN     ./Makefile
+Using .config as base
+Merging ../arch/arm64/configs/vendor/samsung/r8q.config
+Value of CONFIG_ANDROID_TIMED_OUTPUT is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_ANDROID_TIMED_OUTPUT is not set
+New value: CONFIG_ANDROID_TIMED_OUTPUT=y
+
+Value of CONFIG_CAMERA_ADAPTIVE_MIPI is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_CAMERA_ADAPTIVE_MIPI is not set
+New value: CONFIG_CAMERA_ADAPTIVE_MIPI=y
+
+Value of CONFIG_CAMERA_SSM_I2C_ENV is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_CAMERA_SSM_I2C_ENV is not set
+New value: CONFIG_CAMERA_SSM_I2C_ENV=y
+
+Value of CONFIG_CERTIFY_HALL is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_CERTIFY_HALL is not set
+New value: CONFIG_CERTIFY_HALL=y
+
+Value of CONFIG_CNSS_QCA6390 is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_CNSS_QCA6390 is not set
+New value: CONFIG_CNSS_QCA6390=y
+
+Value of CONFIG_DISABLE_MFC_IC is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_DISABLE_MFC_IC is not set
+New value: CONFIG_DISABLE_MFC_IC=y
+
+Value of CONFIG_ESE_P3_V2_LSI is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_ESE_P3_V2_LSI is not set
+New value: CONFIG_ESE_P3_V2_LSI=y
+
+Value of CONFIG_INPUT_SEC_SECURE_TOUCH is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_INPUT_SEC_SECURE_TOUCH is not set
+New value: CONFIG_INPUT_SEC_SECURE_TOUCH=y
+
+Value of CONFIG_LEDS_KTD2692 is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_LEDS_KTD2692 is not set
+New value: CONFIG_LEDS_KTD2692=y
+
+Value of CONFIG_LEDS_RT8547 is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_LEDS_RT8547 is not set
+New value: CONFIG_LEDS_RT8547=y
+
+Value of CONFIG_MOTOR_DRV_MAX77705 is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_MOTOR_DRV_MAX77705 is not set
+New value: CONFIG_MOTOR_DRV_MAX77705=y
+
+Value of CONFIG_NFC_FEATURE_SN100U is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_NFC_FEATURE_SN100U is not set
+New value: CONFIG_NFC_FEATURE_SN100U=y
+
+Value of CONFIG_NFC_PN547 is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_NFC_PN547 is not set
+New value: CONFIG_NFC_PN547=y
+
+Value of CONFIG_NFC_PN547_ESE_SUPPORT is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_NFC_PN547_ESE_SUPPORT is not set
+New value: CONFIG_NFC_PN547_ESE_SUPPORT=y
+
+Value of CONFIG_PANEL_EA8076A_AMS646UJ10_FHD is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_PANEL_EA8076A_AMS646UJ10_FHD is not set
+New value: CONFIG_PANEL_EA8076A_AMS646UJ10_FHD=y
+
+Value of CONFIG_PANEL_EA8079B_AMS646YB01_FHD is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_PANEL_EA8079B_AMS646YB01_FHD is not set
+New value: CONFIG_PANEL_EA8079B_AMS646YB01_FHD=y
+
+Value of CONFIG_PANEL_S6E3FC3_AMS646YD01_FHD is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_PANEL_S6E3FC3_AMS646YD01_FHD is not set
+New value: CONFIG_PANEL_S6E3FC3_AMS646YD01_FHD=y
+
+Value of CONFIG_QCA_CLD_WLAN is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_QCA_CLD_WLAN is not set
+New value: CONFIG_QCA_CLD_WLAN=y
+
+Value of CONFIG_SAMSUNG_FRONT_FIXED_FOCUS is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_SAMSUNG_FRONT_FIXED_FOCUS is not set
+New value: CONFIG_SAMSUNG_FRONT_FIXED_FOCUS=y
+
+Value of CONFIG_SAMSUNG_NFC is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_SAMSUNG_NFC is not set
+New value: CONFIG_SAMSUNG_NFC=y
+
+Value of CONFIG_SAMSUNG_OIS_MCU_STM32 is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_SAMSUNG_OIS_MCU_STM32 is not set
+New value: CONFIG_SAMSUNG_OIS_MCU_STM32=y
+
+Value of CONFIG_SAMSUNG_REAR_TRIPLE is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_SAMSUNG_REAR_TRIPLE is not set
+New value: CONFIG_SAMSUNG_REAR_TRIPLE=y
+
+Value of CONFIG_SAMSUNG_SBI is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_SAMSUNG_SBI is not set
+New value: CONFIG_SAMSUNG_SBI=y
+
+Value of CONFIG_SEC_NFC_LOGGER is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_SEC_NFC_LOGGER is not set
+New value: CONFIG_SEC_NFC_LOGGER=y
+
+Value of CONFIG_SEC_NFC_V2 is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_SEC_NFC_V2 is not set
+New value: CONFIG_SEC_NFC_V2=y
+
+Value of CONFIG_SEC_R8Q_PROJECT is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_SEC_R8Q_PROJECT is not set
+New value: CONFIG_SEC_R8Q_PROJECT=y
+
+Value of CONFIG_SENSORS_A96T3X6 is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_SENSORS_A96T3X6 is not set
+New value: CONFIG_SENSORS_A96T3X6=y
+
+Value of CONFIG_SENSORS_A96T3X6_BLOCK_SAR_ONLY is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_SENSORS_A96T3X6_BLOCK_SAR_ONLY is not set
+New value: CONFIG_SENSORS_A96T3X6_BLOCK_SAR_ONLY=y
+
+Value of CONFIG_SENSORS_A96T3X6_CRC_CHECK is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_SENSORS_A96T3X6_CRC_CHECK is not set
+New value: CONFIG_SENSORS_A96T3X6_CRC_CHECK=y
+
+Value of CONFIG_SENSORS_A96T3X6_FORCE_FW_UPDATE is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_SENSORS_A96T3X6_FORCE_FW_UPDATE is not set
+New value: CONFIG_SENSORS_A96T3X6_FORCE_FW_UPDATE=y
+
+Value of CONFIG_SENSORS_FW_VENDOR is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_SENSORS_FW_VENDOR is not set
+New value: CONFIG_SENSORS_FW_VENDOR=y
+
+Value of CONFIG_SENSORS_GW9558X is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_SENSORS_GW9558X is not set
+New value: CONFIG_SENSORS_GW9558X=y
+
+Value of CONFIG_SENSORS_TCS3407 is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_SENSORS_TCS3407 is not set
+New value: CONFIG_SENSORS_TCS3407=y
+
+Value of CONFIG_SND_SOC_CS35L41 is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_SND_SOC_CS35L41 is not set
+New value: CONFIG_SND_SOC_CS35L41=y
+
+Value of CONFIG_SS_VIBRATOR is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_SS_VIBRATOR is not set
+New value: CONFIG_SS_VIBRATOR=y
+
+Value of CONFIG_SUPPORT_LIGHT_DUALIZATION is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_SUPPORT_LIGHT_DUALIZATION is not set
+New value: CONFIG_SUPPORT_LIGHT_DUALIZATION=y
+
+Value of CONFIG_SUPPORT_STK33610_FACTORY is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_SUPPORT_STK33610_FACTORY is not set
+New value: CONFIG_SUPPORT_STK33610_FACTORY=y
+
+Value of CONFIG_SUPPORT_UNDER_PANEL_WITH_LIGHT_SENSOR is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_SUPPORT_UNDER_PANEL_WITH_LIGHT_SENSOR is not set
+New value: CONFIG_SUPPORT_UNDER_PANEL_WITH_LIGHT_SENSOR=y
+
+Value of CONFIG_TOUCHSCREEN_STM_FTS5CU56A is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_TOUCHSCREEN_STM_FTS5CU56A is not set
+New value: CONFIG_TOUCHSCREEN_STM_FTS5CU56A=y
+
+Value of CONFIG_TOUCHSCREEN_ZINITIX_ZT7650 is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_TOUCHSCREEN_ZINITIX_ZT7650 is not set
+New value: CONFIG_TOUCHSCREEN_ZINITIX_ZT7650=y
+
+Value of CONFIG_TX_5V_DISABLE is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_TX_5V_DISABLE is not set
+New value: CONFIG_TX_5V_DISABLE=y
+
+Value of CONFIG_USE_CAMERA_HW_BIG_DATA is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_USE_CAMERA_HW_BIG_DATA is not set
+New value: CONFIG_USE_CAMERA_HW_BIG_DATA=y
+
+Value of CONFIG_WIRELESS_AUTH is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_WIRELESS_AUTH is not set
+New value: CONFIG_WIRELESS_AUTH=y
+
+Value of CONFIG_WIRELESS_CHARGER_HAL_MFC is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_WIRELESS_CHARGER_HAL_MFC is not set
+New value: CONFIG_WIRELESS_CHARGER_HAL_MFC=y
+
+Value of CONFIG_WIRELESS_CHARGER_MFC is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_WIRELESS_CHARGER_MFC is not set
+New value: CONFIG_WIRELESS_CHARGER_MFC=y
+
+Value of CONFIG_WIRELESS_FIRMWARE_UPDATE is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_WIRELESS_FIRMWARE_UPDATE is not set
+New value: CONFIG_WIRELESS_FIRMWARE_UPDATE=y
+
+Value of CONFIG_WIRELESS_IC_PARAM is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_WIRELESS_IC_PARAM is not set
+New value: CONFIG_WIRELESS_IC_PARAM=y
+
+Value of CONFIG_WIRELESS_TX_MODE is redefined by fragment ../arch/arm64/configs/vendor/samsung/r8q.config:
+Previous value: # CONFIG_WIRELESS_TX_MODE is not set
+New value: CONFIG_WIRELESS_TX_MODE=y
+
+#
+# merged configuration written to .config (needs make)
+#
+  GEN     ./Makefile
+scripts/kconfig/conf  --oldconfig Kconfig
+#
+# configuration written to .config
+#
+yes: standard output: Broken pipe
+make[1]: Leaving directory '/home/exynos9830/stuff/acacia/acacia-revived/out-test-config'

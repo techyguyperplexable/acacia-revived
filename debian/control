@@ -1,0 +1,77 @@
+Source: linux-android-samsung-r8q
+Section: kernel
+Priority: optional
+Maintainer: Droidian porters <info@droidian.org>
+XS-Droidian-Host-Arch: arm64
+XS-Droidian-Build-On: amd64
+Build-Depends: build-essential,
+               dpkg-dev,
+               findutils,
+               android-platform-prebuilts-python-linux-x86-2.7.5,
+               debhelper (>= 13),
+               bc,
+               rsync,
+               kmod,
+               cpio,
+               bison,
+               flex,
+               libssl-dev,
+               device-tree-compiler,
+               linux-initramfs-halium-generic,
+               linux-packaging-snippets,
+               android-sdk-ufdt-tests,
+               mkbootimg (>= 10.0.0),
+               mkdtboimg,
+               avbtool,
+               linux-initramfs-halium-generic:arm64,
+               binutils-aarch64-linux-gnu,
+               binutils-arm-linux-gnueabi,
+               gcc-arm-linux-gnueabi,
+               clang-android-14.0-r450784d
+Standards-Version: 4.5.0.3
+Vcs-Browser: https://github.com/techyguyperplexable/acacia-revived
+Vcs-Git: https://github.com/techyguyperplexable/acacia-revived.git
+
+Package: linux-image-4.19.325-samsung-r8q
+Architecture: arm64
+Depends: ${misc:Depends}
+Description: Linux kernel for Samsung Galaxy S20 FE 5G
+ This package contains the Linux kernel for the Samsung Galaxy S20 FE 5G
+ r8q Halium/Droidian port.
+ .
+ Note: this package only ships the kernel image and modules. Use the
+ linux-bootimage package for an Android boot image with the Halium initramfs.
+
+Package: linux-bootimage-4.19.325-samsung-r8q
+Architecture: arm64
+Depends: ${misc:Depends},
+         linux-image-4.19.325-samsung-r8q (= ${binary:Version})
+Description: Linux kernel for Samsung Galaxy S20 FE 5G - Android Boot Image
+ This package contains an Android boot image for the Samsung Galaxy S20 FE 5G
+ r8q Halium/Droidian port. The image includes the Halium initramfs.
+
+Package: linux-headers-4.19.325-samsung-r8q
+Architecture: arm64
+Depends: ${misc:Depends},
+         linux-image-4.19.325-samsung-r8q (= ${binary:Version})
+Description: Linux kernel for Samsung Galaxy S20 FE 5G - Headers
+ This package contains the Linux kernel headers for the Samsung Galaxy S20 FE
+ 5G r8q Halium/Droidian port.
+
+Package: linux-image-samsung-r8q
+Architecture: arm64
+Depends: linux-image-4.19.325-samsung-r8q (= ${binary:Version})
+Description: Linux kernel for Samsung Galaxy S20 FE 5G (latest)
+ This package depends on the latest kernel image available for r8q.
+
+Package: linux-bootimage-samsung-r8q
+Architecture: arm64
+Depends: linux-bootimage-4.19.325-samsung-r8q (= ${binary:Version})
+Description: Linux kernel for Samsung Galaxy S20 FE 5G - Android Boot Image (latest)
+ This package depends on the latest Android boot image available for r8q.
+
+Package: linux-headers-samsung-r8q
+Architecture: arm64
+Depends: linux-headers-4.19.325-samsung-r8q (= ${binary:Version})
+Description: Linux kernel for Samsung Galaxy S20 FE 5G - Headers (latest)
+ This package depends on the latest kernel headers available for r8q.

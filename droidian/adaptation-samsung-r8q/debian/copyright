@@ -1,0 +1,12 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: adaptation-samsung-r8q
+Source: https://github.com/techyguyperplexable/acacia-revived
+
+Files: *
+Copyright: 2026 Droidian porters
+License: GPL-2
+
+License: GPL-2
+ This program is free software; you can redistribute it and/or modify it under
+ the terms of the GNU General Public License version 2 as published by the Free
+ Software Foundation.

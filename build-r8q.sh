@@ -24,6 +24,7 @@ AK3_DIR="$(pwd)/android/AnyKernel3"
 ZIPNAME="Acacia-CI-$(date '+%Y%m%d').zip"
 TC_DIR="$(pwd)/tc/clang-r522817"
 DEFCONFIG="vendor/kona-not_defconfig vendor/samsung/kona-sec-not.config vendor/samsung/r8q.config"
+DROIDIAN_CONFIG="droidian/r8q-halium.config"
 
 OUT_DIR="$(pwd)/out"
 BOOT_DIR="$OUT_DIR/arch/arm64/boot"
@@ -55,6 +56,17 @@ mkdir -p out
 echo -e "${YELLOW}building with: $DEFCONFIG${NC}"
 
 make O=out ARCH=arm64 $DEFCONFIG
+if [ ! -f "$DROIDIAN_CONFIG" ]; then
+    echo -e "${RED}Droidian config fragment missing: $DROIDIAN_CONFIG${NC}"
+    exit 1
+fi
+
+echo -e "${YELLOW}merging Droidian/Halium config: $DROIDIAN_CONFIG${NC}"
+if ! KCONFIG_CONFIG="$OUT_DIR/.config" scripts/kconfig/merge_config.sh -m "$OUT_DIR/.config" "$DROIDIAN_CONFIG" > "$OUT_DIR/droidian-merge.log" 2>&1; then
+    echo -e "${RED}Droidian config merge failed. See $OUT_DIR/droidian-merge.log${NC}"
+    tail -80 "$OUT_DIR/droidian-merge.log"
+    exit 1
+fi
 make O=out ARCH=arm64 olddefconfig
 
 echo -e "\n${YELLOW}Starting compilation...${NC}\n"

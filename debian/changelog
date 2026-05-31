@@ -1,0 +1,5 @@
+linux-android-samsung-r8q (4.19.325-0droidian1) unstable; urgency=medium
+
+  * Initial Droidian/Halium kernel package for r8q.
+
+ -- Droidian porters <info@droidian.org>  Sun, 31 May 2026 00:00:00 +0000

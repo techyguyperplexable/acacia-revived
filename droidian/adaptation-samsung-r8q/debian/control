@@ -1,0 +1,22 @@
+Source: adaptation-samsung-r8q
+Section: misc
+Priority: optional
+Maintainer: Droidian porters <info@droidian.org>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.5.0
+
+Package: adaptation-samsung-r8q
+Architecture: arm64
+Depends: ${misc:Depends},
+         linux-bootimage-samsung-r8q
+Description: Droidian adaptation package for Samsung Galaxy S20 FE 5G
+ Device-specific Droidian adaptation package for Samsung Galaxy S20 FE 5G
+ r8q. It installs package source metadata and anchors the r8q kernel package.
+
+Package: adaptation-samsung-r8q-configs
+Architecture: arm64
+Depends: ${misc:Depends},
+         adaptation-samsung-r8q (= ${binary:Version})
+Description: Droidian configuration package for Samsung Galaxy S20 FE 5G
+ Device-specific configuration files for the Samsung Galaxy S20 FE 5G r8q
+ Droidian/Halium port.

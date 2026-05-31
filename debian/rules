@@ -1,0 +1,10 @@
+#!/usr/bin/make -f
+
+include /usr/share/linux-packaging-snippets/kernel-snippet.mk
+
+# The r8q device tree set is picky with the in-tree dtc on some hosts.
+# Droidian's guide recommends using the packaged dtc when DTB/DTBO fails.
+BUILD_COMMAND := $(BUILD_COMMAND) LLVM=1 LLVM_IAS=1 DTC_EXT=/usr/bin/dtc
+
+%:
+	dh $@

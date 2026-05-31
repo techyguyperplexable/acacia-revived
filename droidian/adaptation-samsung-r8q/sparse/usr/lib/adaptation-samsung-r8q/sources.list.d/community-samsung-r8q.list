@@ -1,0 +1,2 @@
+# Replace this with the package repository generated from droidian/package-repo.
+# deb [signed-by=/usr/share/keyrings/r8q.gpg] https://example.invalid/droidian-r8q bookworm main
